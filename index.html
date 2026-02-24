@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSH WESM Simulator | DOE & ERC Supplemental Policy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-body: #ffffff;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-section h1 {
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, #1e293b 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-section p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-card .label {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .stat-card .info-trigger {
+            cursor: help;
+            color: var(--primary);
+            font-size: 0.75rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        #pshChartContainer {
+            height: 400px;
+            width: 100%;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .secondary-btn:hover {
+            background: #dbeafe;
+        }
+
+        .year-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .year-pill.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .reservoir-visual {
+            height: 200px;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column-reverse;
+            border: 2px solid var(--border-color);
+        }
+
+        .water {
+            background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+            width: 100%;
+            transition: height 0.5s ease-in-out;
+            position: relative;
+        }
+
+        .water::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            filter: blur(4px);
+        }
+
+        .reservoir-labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1rem;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .res-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .settlement-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .settlement-table th {
+            text-align: left;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settlement-table td {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+        }
+
+        .settlement-table .total-row {
+            font-weight: 700;
+            border-top: 2px solid var(--border-color);
+        }
+
+        /* Tooltip style */
+        .popup-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            z-index: 1000;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-citation {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .feature-badge {
+            background: var(--success-light);
+            color: var(--success);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .erc-feature {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .erc-feature h4 {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .selection-bar {
+            display: flex;
+            gap: 2.5rem;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 1.25rem 1.75rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .selection-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .selection-item .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .selection-item .value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .chart-res-grid {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 1200px) {
+            .chart-res-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .calc-basis-btn {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.2s;
+        }
+
+        .calc-basis-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .audit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .audit-card {
+            background: #f8fafc;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .audit-card h4 {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .audit-card .val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .footer-credit {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #fca5a5;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 1024px) {
+            .audit-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .audit-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="modal-overlay" id="overlay"></div>
+    <div class="popup-modal" id="modal">
+        <span class="modal-close" onclick="closeModal()">✕</span>
+        <div class="modal-header">
+            <div class="modal-citation" id="modalCitation"></div>
+            <h2 id="modalTitle"></h2>
+        </div>
+        <div id="modalBody" style="font-size: 0.95rem; color: #4b5563;"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <h1>PSH·WESM Intelligence</h1>
+                <p>Settlement Simulator (OGCS-PROM+1623-2025 ANNEX B / Non-FIT GEAP)</p>
+            </div>
+            <div class="controls">
+                <div class="year-selector">
+                    <span class="year-pill active" onclick="setYear(2025)">2025 (Forecast)</span>
+                    <span class="year-pill" onclick="setYear(2024)">2024 (5.58)</span>
+                    <span class="year-pill" onclick="setYear(2023)">2023 (6.44)</span>
+                    <span class="year-pill" onclick="setYear(2022)">2022 (7.50)</span>
+                </div>
+                <div class="year-selector" style="margin-right: 1rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Grid Profile: Mixed
+                        Performance</span>
+                </div>
+                <select id="plantSelect" onchange="updatePlant()"
+                    style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border-color); font-family: 'Inter'; font-size: 0.875rem; background: white;">
+                    <optgroup label="GEA3 (2028-2030)">
+                        <option value="kibungan">Kibungan PSH (Coheco) - 500MW</option>
+                        <option value="wawa1">Wawa PSH 1 (Olympia) - 600MW</option>
+                        <option value="pakil">Pakil PSH (Ahunan) - 1400MW</option>
+                    </optgroup>
+                    <optgroup label="GEA3 (2031-2035)">
+                        <option value="sr_lower">SR Lower East (San Roque) - 800MW</option>
+                        <option value="sr_west">SR West (San Roque) - 800MW</option>
+                        <option value="maton">Maton PSH (Pan Pacific) - 2000MW</option>
+                        <option value="aklan">Aklan PSH (San Roque) - 250MW</option>
+                    </optgroup>
+                </select>
+                <button class="primary-btn" id="playBtn" onclick="toggleSim()">Run 5-Min Cycle</button>
+                <button class="secondary-btn" onclick="resetSim()">Reset</button>
+            </div>
+        </header>
+
+        <div class="selection-bar" id="selectionBar">
+            <div class="selection-item">
+                <div class="label">RE Developer</div>
+                <div class="value" id="selDeveloper">-</div>
+            </div>
+            <div class="selection-item">
+                <div class="label">RE Facility Name</div>
+                <div class="value" id="selFacility">-</div>
+            </div>
+            <div class="selection-item">
+                <div class="label">GEA3 Lot</div>
+                <div class="value" id="selLot">-</div>
+            </div>
+            <div class="selection-item">
+                <div class="label">Non-FIT GEAP Price</div>
+                <div class="value" id="selPrice">-</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('simulator')">PSH Simulator</div>
+            <div class="tab" onclick="switchTab('audit')">ERC Regulatory Audit</div>
+        </div>
+
+        <div id="simulator" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="label">WESM Price <span class="info-trigger" onclick="showInfo('wesm_price')">ⓘ</span>
+                    </div>
+                    <div class="value" id="currentPrice">₱4.50<small>/kWh</small></div>
+                    <div id="priceTrend" style="font-size: 0.75rem; margin-top: 0.25rem; color: var(--success);">Annual
+                        Average WESM</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Current Dispatch <span class="info-trigger"
+                            onclick="showInfo('dispatch')">ⓘ</span>
+                    </div>
+                    <div class="value" id="currentDispatch">0 MW</div>
+                    <div id="dispatchMode" class="feature-badge"
+                        style="margin-top: 0.25rem; background: #f1f5f9; color: #64748b;">STANDBY</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Potential Rate Impact <span class="info-trigger"
+                            onclick="showInfo('rate_impact')">ⓘ</span>
+                    </div>
+                    <div class="value" id="rateImpact">₱0.0000<small>/kWh</small></div>
+                    <div id="verdictBadge" class="feature-badge"
+                        style="margin-top: 0.25rem; background: #f1f5f9; color: #64748b;">NEUTRAL</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Net Settlement <span class="info-trigger"
+                            onclick="showInfo('settlement')">ⓘ</span>
+                    </div>
+                    <div class="value" id="netSettlement">₱0.00</div>
+                    <div id="settlementStatus"
+                        style="font-size: 0.75rem; margin-top: 0.25rem; color: var(--text-muted);">
+                        Day-Ahead Projection</div>
+                </div>
+            </div>
+
+            <div class="main-grid">
+                <div class="left-col">
+                    <div class="chart-res-grid">
+                        <div class="card" style="margin-bottom: 0;">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                                    </svg>
+                                    Real-Time 5-Minute Market Activity
+                                </div>
+                                <div id="simTime" style="font-weight: 600; color: var(--primary);">00:00 H</div>
+                            </div>
+                            <div id="pshChartContainer">
+                                <canvas id="pshChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-bottom: 0;">
+                            <div class="card-header">
+                                <div class="card-title">Reservoir Status</div>
+                                <div class="feature-badge" id="waterPct">50%</div>
+                            </div>
+                            <div class="reservoir-visual" style="height: 380px;">
+                                <div class="water" id="waterLevel" style="height: 50%;"></div>
+                                <div class="reservoir-labels">
+                                    <div class="res-label">Upper Reservoir (100%)</div>
+                                    <div class="res-label" style="border-top: 1px dashed #cbd5e1; padding-top: 2px;">
+                                        Standard
+                                        Level</div>
+                                    <div class="res-label">Lower Reservoir (0%)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Detailed Methodology & Citations</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-dark);">
+                            <div style="margin-bottom: 1rem;">
+                                <strong>1. Settlement Formula (OGCS-PROM+1623-2025 Annex B):</strong><br>
+                                <code>Total GEA = Σ (|ACᵢ| × GET × dᵢ)</code><br>
+                                <small>Where AC=Available Capacity(kW), GET=Bidding Rate(PhP/kW/h),
+                                    d=Duration(h)</small>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <strong>2. Consumer Rate Impact Formula:</strong><br>
+                                <code>Impact (PhP/kWh) = (GEA_Payment - [EnergyRevenue - PumpingCost] - AS_Revenue) / SystemDemand</code><br>
+                                <small>System-wide impact is socialized across all metered customers per Sec 8.2 of
+                                    Supplemental Policy.</small>
+                            </div>
+                            <div style="background: #f1f5f9; padding: 0.75rem; border-radius: 0.5rem;">
+                                <strong>WESM Price Data Sources (Annual GWAP):</strong>
+                                <div style="font-family: monospace; font-size: 0.7rem; margin-top: 0.25rem;">
+                                    2024: ₱5.58/kWh (IEMOP Jan-Dec Wrap)<br>
+                                    2023: ₱6.44/kWh (IEMOP Annual Report)<br>
+                                    2022: ₱7.50/kWh (WESM Market Assessment)
+                                </div>
+                                <hr style="margin: 0.5rem 0; border: 0; border-top: 1px solid #cbd5e1;">
+                                <strong>Source Reference Documents:</strong>
+                                <ul style="margin-top: 0.1rem; padding-left: 1.25rem; font-size: 0.75rem;">
+                                    <li><strong>OGCS-PROM+1623-2025 Annex B:</strong> Non-FIT GEAP Settlement</li>
+                                    <li><strong>DC2023-10-0029:</strong> PSH & KPSPP Policy</li>
+                                    <li><strong>IEMOP Reports:</strong> 2022-2024 Market Data</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Summary: All PSH Plants Rate Impact Comparison</div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table class="settlement-table" style="font-size: 0.8rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Lot</th>
+                                        <th>Facility Name</th>
+                                        <th>Capacity</th>
+                                        <th>GEAP Rate</th>
+                                        <th style="text-align: right;">Est. Rate Impact*</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="plantTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem;">
+                                *Projected monthly socialized charge per metered kWh based on current year market
+                                averages.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">20-Year Grid Impact Roadmap (Projected)</div>
+                        </div>
+                        <div style="padding: 1rem;">
+                            <canvas id="roadmapChart"
+                                style="height: 250px; width: 100%; margin-bottom: 1.5rem;"></canvas>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table class="settlement-table" style="font-size: 0.75rem;">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Active Units</th>
+                                        <th>Total Capacity</th>
+                                        <th style="text-align: right;">Cumulative Impact**</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roadmapTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem;">
+                                **Estimated socialized charge considering the phased addition of Lot 1, 2, and 3 plants.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Consumer Impact Summary</div>
+                        </div>
+                        <div id="consumerVerdictCard"
+                            style="padding: 1rem; border-radius: 0.75rem; background: var(--primary-light); border: 1px solid var(--primary); transition: all 0.3s ease;">
+                            <h3 id="verdictTitle" style="color: var(--primary); margin-bottom: 0.5rem;">Awaiting
+                                Simulation...</h3>
+                            <p id="verdictBody" style="font-size: 0.875rem; color: var(--text-dark);">
+                                Click "Run 5-Min Cycle" to analyze how the current PSH settlement affects consumer
+                                electricity rates.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Life-Cycle Settlement Projection</div>
+                        </div>
+                        <table class="settlement-table" style="font-size: 0.85rem;">
+                            <tbody id="projectionTable">
+                                <tr>
+                                    <td>Daily Impact</td>
+                                    <td style="text-align: right;" id="projDaily">₱0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Monthly Settlement</td>
+                                    <td style="text-align: right;" id="projMonthly">₱0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Annual Settlement</td>
+                                    <td style="text-align: right;" id="projAnnual">₱0.00</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>20-Year Lifecycle</td>
+                                    <td style="text-align: right; color: var(--primary);" id="proj20Year">₱0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Settlement Breakdown</div>
+                        </div>
+                        <table class="settlement-table">
+                            <tbody>
+                                <tr>
+                                    <td>Capacity Payment (GEA)</td>
+                                    <td style="text-align: right;" id="breakdownGEA">₱0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Energy Trading (Injection)</td>
+                                    <td style="text-align: right;" id="breakdownEnergy">₱0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Pumping Cost (Deduction)</td>
+                                    <td style="text-align: right; color: var(--danger);" id="breakdownPumping">(₱0.00)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ancillary Services (AS)</td>
+                                    <td style="text-align: right;" id="breakdownAS">₱0.00</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>TOTAL NET SETTLEMENT</td>
+                                    <td style="text-align: right; color: var(--primary);" id="breakdownTotal">₱0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <div class="card-header">
+                            <div class="card-title">📜 DOE DC2024-01-0003 Provisions</div>
+                        </div>
+                        <div style="font-size: 0.75rem; line-height: 1.5; color: var(--text-dark);">
+                            <div style="margin-bottom: 0.75rem;"><strong>Sec 3.1:</strong> GEA PSH shall receive
+                                Capacity Payments for 24/7 availability.</div>
+                            <div style="margin-bottom: 0.75rem;"><strong>Sec 4.2:</strong> Energy settlement via Market
+                                Operator using Net-Settlement mechanism.</div>
+                            <div style="margin-bottom: 0.75rem;"><strong>Sec 5.1:</strong> Mandatory 75% physical RTE
+                                for full cost recovery.</div>
+                            <div style="margin-bottom: 0.75rem;"><strong>Sec 6.3:</strong> Priority Grid Security
+                                dispatch during N-1 contingencies.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">🛰️ Policy Enforcement Log</div>
+                        </div>
+                        <div id="policyLog"
+                            style="height: 250px; overflow-y: auto; font-family: monospace; font-size: 0.65rem; background: #0f172a; color: #38bdf8; padding: 0.75rem; border-radius: 0.5rem; line-height: 1.4;">
+                            <div style="color: #94a3b8;">[SYSTEM] Awaiting Simulation start...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Close main-grid -->
+    </div><!-- Close simulator tab -->
+
+    <div id="audit" class="tab-content" style="display: none;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">🔍 ERC Advanced Regulatory Compliance Metrics</div>
+            </div>
+            <div class="audit-grid">
+                <div class="audit-card">
+                    <h4>01. RTE Compliance (75% Rule)</h4>
+                    <div class="val" id="auditRTE">0%</div>
+                    <div id="rteStatus" style="font-size: 0.7rem; margin-top: 0.25rem;">Auditing Efficiency...
+                    </div>
+                </div>
+                <div class="audit-card">
+                    <h4>02. Avoided Peaker Cost</h4>
+                    <div class="val" id="auditPeaker">₱0.00</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Displacing ₱15/kWh Peakers</div>
+                </div>
+                <div class="audit-card">
+                    <h4>03. VOLL Resilience Value</h4>
+                    <div class="val" id="auditVOLL">₱0.00</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">National Value of Lost Load Buffer
+                    </div>
+                </div>
+                <div class="audit-card">
+                    <h4>04. Carbon Credits (Green Score)</h4>
+                    <div class="val" id="auditCO2">0.00 tCO2</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">CO2 Emission Displacement</div>
+                </div>
+                <div class="audit-card">
+                    <h4>05. Pumping Risk Factor</h4>
+                    <div class="val" id="auditPumpingRisk">Normal</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Vulnerability to WESM price spikes
+                    </div>
+                </div>
+                <div class="audit-card">
+                    <h4>06. AS Revenue Cap Audit</h4>
+                    <div class="val" id="auditAS">Pass</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Ancillary vs Energy Market Cap</div>
+                </div>
+                <div class="audit-card">
+                    <h4>07. Multi-Project Synergy</h4>
+                    <div class="val" id="auditSynergy">1.42</div>
+                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Portfolio Volatility Reduction</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-header">
+                <div class="card-title">⚖️ Expanded Regulatory Stress Test & Sensitivity Engine</div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="stress-controls-panel">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>GEA Rate Sensitivity (PhP/kW/h)</span>
+                                <span id="valGET" style="color: var(--primary);">2.5787</span>
+                            </label>
+                            <input type="range" min="1.5" max="8" step="0.01" value="2.5787" id="slideGET"
+                                style="width: 100%; margin-top: 0.5rem;" oninput="updateStressParam('gea', this.value)">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                <span>Competitive (1.5)</span>
+                                <span>High Cost (8.0)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>Market Volatility Factor (σ)</span>
+                                <span id="valVol" style="color: var(--primary);">1.0</span>
+                            </label>
+                            <input type="range" min="0.5" max="2.5" step="0.1" value="1.0" id="slideVol"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateStressParam('volatility', this.value)">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                <span>Stable (0.5)</span>
+                                <span>Turbulent (2.5)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>Regulatory Stress Scenario</span>
+                                <span class="feature-badge" id="scenarioBadge"
+                                    style="background:#e0f2fe; color:#0369a1;">Baseline</span>
+                            </label>
+                            <select id="stressScenario" class="select-input"
+                                style="width: 100%; margin-top: 0.5rem; padding: 0.5rem; border-radius: 0.4rem; border: 1px solid var(--border-color); font-size: 0.8rem;"
+                                onchange="updateStressParam('scenario', this.value)">
+                                <option value="baseline">Baseline Market Conditions</option>
+                                <option value="heatwave">Extreme Heat Wave (+30% Peak Demand)</option>
+                                <option value="curtailment">VRE Curtailment (Higher Volatility)</option>
+                                <option value="fault">Grid Fault (Must-Run Redispatch)</option>
+                            </select>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <button class="secondary-btn" id="btnMustRun" onclick="toggleMustRun()"
+                                style="font-size: 0.75rem;">
+                                🛡️ Forced N-1 Dispatch
+                            </button>
+                            <button class="secondary-btn" id="btnZonal" onclick="toggleZonalLMP()"
+                                style="font-size: 0.75rem;">
+                                📍 Zonal LMP Delta
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stress-analysis-panel"
+                        style="background: #f8fafc; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-color);">PREDICTIVE
+                                RATE IMPACT ZONE</span>
+                            <span id="complianceProb"
+                                style="font-size: 0.7rem; font-weight: 700; color: var(--success);">100% AUDIT PASS
+                                PROB</span>
+                        </div>
+                        <div style="height: 160px;">
+                            <canvas id="sensitivityChart"></canvas>
+                        </div>
+                        <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div
+                                style="background: #fff; padding: 0.5rem; border-radius: 0.4rem; border: 1px solid #e2e8f0; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">MAX RATE
+                                    SPIKE</div>
+                                <div id="stressMaxRI"
+                                    style="font-size: 0.8rem; font-weight: 700; color: var(--danger);">₱0.0000</div>
+                            </div>
+                            <div
+                                style="background: #fff; padding: 0.5rem; border-radius: 0.4rem; border: 1px solid #e2e8f0; text-align: center;">
+                                <div style="font-size: 0.6rem; color: var(--text-muted); font-weight: 600;">CONFIDENCE
+                                    LEVEL</div>
+                                <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary);">95% CI</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <div class="card-title">Regulatory Metadata & Transparency</div>
+                </div>
+                <div style="padding: 1.25rem;">
+                    <p style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">
+                        This auditing suite utilizes the <strong>ERC Standard Formulae</strong> for ESS/PSH settlement
+                        oversight. Metrics are recalculated every 5-minute trading interval based on WESM dispatch
+                        signals.
+                    </p>
+                    <button class="calc-basis-btn" onclick="showInfo('audit_methodology')">📜 View Detailed Calculation
+                        Methodology</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-credit">
+            Developed by Franz Xyrlo I. Tobias, PEE
+        </div>
+
+        <script>
+            // GEA3 Plant Data from Official Screenshots
+            const PLANTS = {
+                kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028 },
+                wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029 },
+                pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030 },
+                sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031 },
+                sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032 },
+                maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033 },
+                aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034 }
+            };
+
+            const HISTORICAL_PRICES = {
+                2025: 4.80,
+                2024: 5.58,
+                2023: 6.44,
+                2022: 7.50
+            };
+
+            const SEASONS = {
+                default: { name: "Average", volatility: 1.1, peakMulti: 1.7 }
+            };
+            let currentSeason = 'default';
+
+            // Assumed system-wide monthly demand for rate impact calculation
+            const SYSTEM_DEMAND_MONTHLY_MWH = 8000000;
+
+            let currentPlant = "kibungan";
+            let capacityMW = 500;
+            const ROUNDTRIP_EFF = 0.75;
+            let nonFitGet = 2.5787;
+            const INTERVALS = 288;
+
+            let currentInterval = 0;
+            let isSimulating = false;
+            let simInterval;
+            let currentYear = 2025;
+            // currentSeason is already declared above with 'default' 
+
+            let marketData = [];
+            let waterLevel = 50;
+            let cumulativeGEA = 0;
+            let cumulativeEnergy = 0;
+            let cumulativePumping = 0;
+            let cumulativeAS = 0;
+            let totalMWhGen = 0;
+            let totalMWhPump = 0;
+
+            let mustRunActive = false;
+            let zonalLMPActive = false;
+
+            // Initialize Chart
+            const ctx = document.getElementById('pshChart').getContext('2d');
+            const pshChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: INTERVALS }, (_, i) => {
+                        let h = Math.floor(i / 12);
+                        let m = (i % 12) * 5;
+                        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                    }),
+                    datasets: [
+                        {
+                            label: 'WESM Price (PHP/kWh)',
+                            data: [],
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            yAxisID: 'y',
+                            tension: 0.3, pointRadius: 0, fill: true
+                        },
+                        {
+                            label: 'PSH Dispatch (MW)',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            yAxisID: 'y1',
+                            type: 'bar', barThickness: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 12 } },
+                        y: { title: { display: true, text: 'Price (PHP/kWh)' }, position: 'left' },
+                        y1: { title: { display: true, text: 'Dispatch (MW)' }, position: 'right', min: -2000, max: 2000 }
+                    }
+                }
+            });
+
+            const infoContent = {
+                wesm_price: {
+                    title: "WESM Prices (2022-2024)",
+                    citation: "IEMOP SMR 2022-2024 & Wrap Reports",
+                    body: "Historical average clearing prices: 2024 (₱5.58), 2023 (₱6.44), 2022 (₱7.50). High prices in 2022 were driven by global fuel volatility. PSH helps by storing energy during low-price periods and injecting during peaks."
+                },
+                rate_impact: {
+                    title: "Potential Rate Impact",
+                    citation: "Supplemental PSH Policy Section 8.2",
+                    body: "Rate Impact reflects the net cost or benefit passed to consumers (PhP/kWh). <br><br><strong>Logic:</strong> [Total GEA - (Energy Revenue - Pumping Cost) - AS Revenue] / Total System Demand (kWh). <br><br><em>Note: If the net settlement is negative (Revenue > Costs), the impact is 0.0000 or a flow-back.</em>"
+                },
+                audit_methodology: {
+                    title: "ERC Advanced Regulatory Compliance Metrics",
+                    body: `The following formulas define the renumbered regulatory metrics for the PSH suite: <br><br>
+                    <b>01. RTE Compliance:</b> Physical <em>η = ΣE<sub>out</sub> / ΣE<sub>in</sub></em>. Ref: DOE Supplemental Policy Sec 6.1. Target ≥ 75%.<br>
+                    <b>02. Avoided Peaker Cost:</b> <em>V<sub>avoid</sub> = ΣE<sub>inj</sub> * (P<sub>oil</sub> - P<sub>mkt</sub>)</em>. Oil proxy ₱15/kWh constant.<br>
+                    <b>03. VOLL Resilience:</b> Value = <em>S<sub>mwh</sub> * VOLL</em>. (PHT 20,000/MWh). Ref: ERC ASPP Guidelines.<br>
+                    <b>04. Carbon Credits:</b> <em>C = ΣE<sub>inj</sub> * 0.7 tCO2/MWh</em>. Ref: DENR Grid Emission Factor 2023.<br>
+                    <b>05. Pumping Risk Factor:</b> Volatility risk = <em>Price<sub>avg_pump</sub> / Price<sub>avg_annual</sub></em>. Target < 1.0.<br>
+                    <b>06. AS Revenue Cap:</b> Revenue audit based on DOE 'Maximum Allowable Revenue' (MAR) for secondary reserves.<br>
+                    <b>07. Multi-Project Synergy:</b> Benefit = <em>1 - (Var<sub>combined</sub> / ΣVar<sub>individual</sub>)</em>. Portfolio volatility reduction.`,
+                    citation: "DOE DC2024-01-0003 & ERC Case 2023-011 RC"
+                }
+            };
+
+            function showInfo(key) {
+                const info = infoContent[key] || { title: key, citation: "Internal", body: "Explanation not available." };
+                document.getElementById('modalCitation').innerText = info.citation;
+                document.getElementById('modalTitle').innerText = info.title;
+                document.getElementById('modalBody').innerHTML = info.body;
+                document.getElementById('modal').style.display = 'block';
+                document.getElementById('overlay').style.display = 'block';
+            }
+
+            function closeModal() {
+                document.getElementById('modal').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+            }
+
+            function populateTable() {
+                const body = document.getElementById('plantTableBody');
+                body.innerHTML = '';
+
+                // Assume 6 hours of high price injection and 6 hours of pumping for comparison
+                const avgPrice = HISTORICAL_PRICES[currentYear];
+                const pumpPrice = avgPrice * 0.8;
+                const injPrice = avgPrice * 1.3;
+                const hoursPerMonth = 30 * 24;
+
+                Object.values(PLANTS).forEach(p => {
+                    // Approximate monthly settlement math for comparison
+                    const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
+                    const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6); // 6 hrs injection/day
+                    const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6); // 6 hrs pumping/day
+                    const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+
+                    const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                    const ri = Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+                    body.innerHTML += `<tr>
+                    <td><span class="feature-badge" style="background:#f1f5f9; color:#475569;">${p.lot}</span></td>
+                    <td>${p.name}</td>
+                    <td>${p.capacity} MW</td>
+                    <td>₱${p.rate.toFixed(4)}</td>
+                    <td style="text-align: right; font-weight: 600; color: var(--primary);">₱${ri.toFixed(4)}</td>
+                </tr>`;
+                });
+            }
+
+            function updatePlant() {
+                const key = document.getElementById('plantSelect').value;
+                const p = PLANTS[key];
+                currentPlant = key;
+                capacityMW = p.capacity;
+                nonFitGet = p.rate;
+
+                // Updated selection display
+                document.getElementById('selDeveloper').innerText = p.developer;
+                document.getElementById('selFacility').innerText = p.name;
+                document.getElementById('selLot').innerText = p.lot;
+                document.getElementById('selPrice').innerText = `₱${p.rate.toFixed(4)}/kW/h`;
+
+                pshChart.options.scales.y1.min = -capacityMW;
+                pshChart.options.scales.y1.max = capacityMW;
+                resetSim();
+            }
+
+            function generateMarketData() {
+                const base = HISTORICAL_PRICES[currentYear];
+                const s = SEASONS[currentSeason];
+                marketData = [];
+                for (let i = 0; i < INTERVALS; i++) {
+                    const hour = i / 12;
+                    let multiplier = 1.0;
+                    if (hour >= 10 && hour <= 15) multiplier = 1.3 * s.volatility;
+                    if (hour >= 18 && hour <= 21) multiplier = s.peakMulti;
+                    if (hour >= 0 && hour <= 5) multiplier = 0.6;
+                    let price = base * multiplier + (Math.random() - 0.5) * (10 * s.volatility);
+                    marketData.push(Math.max(0.5, price));
+                }
+            }
+
+
+
+            function setYear(year) {
+                currentYear = year;
+                document.querySelectorAll('.year-pill').forEach(p => p.classList.remove('active'));
+                event.target.classList.add('active');
+                populateTable();
+                resetSim();
+            }
+
+            function resetSim() {
+                currentInterval = 0;
+                waterLevel = 50;
+                cumulativeGEA = 0; cumulativeEnergy = 0; cumulativePumping = 0; cumulativeAS = 0;
+                totalMWhGen = 0; totalMWhPump = 0;
+                generateMarketData();
+                updateUI(null, 0);
+                pshChart.data.datasets[0].data = [];
+                pshChart.data.datasets[1].data = [];
+                pshChart.update();
+
+                document.getElementById('policyLog').innerHTML = '<div style="color: #94a3b8;">[SYSTEM] Simulation Reset. Awaiting Cycle...</div>';
+
+                document.getElementById('verdictTitle').innerText = "Simulation Reset";
+                document.getElementById('verdictBody').innerText = "Click Run to analyze " + PLANTS[currentPlant].name + " for " + currentYear + ".";
+                document.getElementById('consumerVerdictCard').style.background = "var(--primary-light)";
+                document.getElementById('consumerVerdictCard').style.borderColor = "var(--primary)";
+            }
+
+            function addLog(msg, color = "#38bdf8") {
+                const log = document.getElementById('policyLog');
+                const timeStr = (currentInterval > 0) ? pshChart.data.labels[currentInterval - 1] : "0.0";
+                log.innerHTML += `<div><span style="color: #64748b;">[${timeStr}h]</span> <span style="color:${color}">${msg}</span></div>`;
+                log.scrollTop = log.scrollHeight;
+            }
+
+            function step() {
+                if (currentInterval >= INTERVALS) {
+                    toggleSim();
+                    finalizeVerdict();
+                    addLog("CRITICAL: 24h Cycle Complete. Finalizing Regulatory Verdict.", "#10b981");
+                    return;
+                }
+
+                const price = marketData[currentInterval];
+                let dispatch = 0;
+                let logMsg = "";
+
+                const avg = HISTORICAL_PRICES[currentYear];
+
+                if (mustRunActive) {
+                    dispatch = capacityMW;
+                    waterLevel -= 0.5;
+                    logMsg = `[DC Sec 6.3] GRID ALERT: Forced N-1 Dispatch. Prioritizing Stability over Market.`;
+                } else if (price > (avg * 1.3) && waterLevel > 10) {
+                    dispatch = capacityMW;
+                    waterLevel -= 0.5;
+                    logMsg = `[DC Sec 4.2] Generation Triggered: Price (₱${price.toFixed(2)}) > 1.3x Benchmark.`;
+                } else if (price < (avg * 0.8) && waterLevel < 95) {
+                    dispatch = -capacityMW;
+                    waterLevel += 0.5 * ROUNDTRIP_EFF;
+                    logMsg = `[DC Sec 4.2] Pumping Triggered: Charging at Low-Cost WESM (₱${price.toFixed(2)}).`;
+                } else {
+                    logMsg = `[DC Sec 3.1] Standby: Accruing GEA Capacity Availability Payment.`;
+                }
+
+                addLog(logMsg);
+
+                const duration = 5 / 60;
+                cumulativeGEA += (capacityMW * 1000 * nonFitGet * duration);
+
+                if (dispatch > 0) {
+                    cumulativeEnergy += (dispatch * 1000 * price * duration);
+                    totalMWhGen += (dispatch * duration);
+                } else if (dispatch < 0) {
+                    cumulativePumping += (Math.abs(dispatch) * 1000 * price * duration);
+                    totalMWhPump += (Math.abs(dispatch) * duration);
+                }
+
+                cumulativeAS += (capacityMW * 3.5 * duration);
+                pshChart.data.datasets[0].data.push(price);
+                pshChart.data.datasets[1].data.push(dispatch);
+
+                currentInterval++;
+                updateUI(price, dispatch);
+                pshChart.update('none');
+            }
+
+            function updateUI(price, dispatch) {
+                if (price !== null) {
+                    document.getElementById('currentPrice').innerHTML = `₱${price.toFixed(2)}<small>/kWh</small>`;
+                    document.getElementById('currentDispatch').innerText = `${dispatch} MW`;
+                    document.getElementById('simTime').innerText = pshChart.data.labels[currentInterval - 1] + " H";
+
+                    const modeEl = document.getElementById('dispatchMode');
+                    if (dispatch > 0) { modeEl.innerText = "GENERATING"; modeEl.style.background = "#dcfce7"; modeEl.style.color = "#166534"; }
+                    else if (dispatch < 0) { modeEl.innerText = "PUMPING"; modeEl.style.background = "#dbeafe"; modeEl.style.color = "#1e40af"; }
+                    else { modeEl.innerText = "STANDBY"; modeEl.style.background = "#f1f5f9"; modeEl.style.color = "#64748b"; }
+                }
+
+                document.getElementById('waterLevel').style.height = `${waterLevel}%`;
+                document.getElementById('waterPct').innerText = `${Math.round(waterLevel)}%`;
+
+                const netCost = cumulativeGEA - cumulativeEnergy + cumulativePumping - cumulativeAS;
+                // Socialize over monthly demand: (Daily Cost * 30 days) / (Monthly MWh * 1000)
+                const ri = Math.max(0, netCost * 30) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+                document.getElementById('netSettlement').innerText = `₱${Math.abs(netCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('rateImpact').innerHTML = `₱${ri.toFixed(4)}<small>/kWh</small>`;
+
+                document.getElementById('breakdownGEA').innerText = `₱${cumulativeGEA.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('breakdownEnergy').innerText = `₱${cumulativeEnergy.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('breakdownPumping').innerText = `(₱${cumulativePumping.toLocaleString(undefined, { maximumFractionDigits: 0 })})`;
+                document.getElementById('breakdownAS').innerText = `₱${cumulativeAS.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('breakdownTotal').innerText = `₱${netCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+                const badge = document.getElementById('verdictBadge');
+                if (ri < 0.04) { badge.innerText = "GOOD"; badge.style.background = "#dcfce7"; badge.style.color = "#166534"; }
+                else { badge.innerText = "MODERATE"; badge.style.background = "#fef3c7"; badge.style.color = "#92400e"; }
+
+                // Update Audit Tab Metrics
+                // RTE must be physical energy efficiency (Energy Out / Energy In), not monetary
+                const physicalRte = totalMWhPump > 0 ? (totalMWhGen / totalMWhPump) : 0;
+                document.getElementById('auditRTE').innerText = `${(physicalRte * 100).toFixed(1)}%`;
+                const rteStatus = document.getElementById('rteStatus');
+                if (physicalRte >= 0.75) { rteStatus.innerText = "✅ Compliance Met (Physical)"; rteStatus.style.color = "var(--success)"; }
+                else { rteStatus.innerText = "⚠️ Under Efficiency Benchmark"; rteStatus.style.color = "var(--danger)"; }
+
+                const avoidedPeaker = totalMWhGen * 1000 * (15 - (HISTORICAL_PRICES[currentYear] || 5));
+                document.getElementById('auditPeaker').innerText = `₱${Math.max(0, avoidedPeaker).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+                const voll = waterLevel * (capacityMW * 4) * 20000 / 100;
+                document.getElementById('auditVOLL').innerText = `₱${voll.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+                const co2 = (cumulativeEnergy / 1000) * 0.7; // 0.7 tCO2 per MWh
+                document.getElementById('auditCO2').innerText = `${co2.toFixed(2)} tCO2`;
+
+                // Advanced Audit Logic
+                const avgPrice = HISTORICAL_PRICES[currentYear] || 5;
+                document.getElementById('auditPumpingRisk').innerText = (price > avgPrice * 1.5) ? "HIGH" : "NORMAL";
+                document.getElementById('auditPumpingRisk').style.color = (price > avgPrice * 1.5) ? "var(--danger)" : "var(--success)";
+
+                const asRevenueActual = cumulativeAS;
+                const energyOppCost = (capacityMW * 1000 * (avgPrice * 0.5) * currentInterval * (5 / 60)); // Placeholder opp cost
+                document.getElementById('auditAS').innerText = (asRevenueActual > energyOppCost) ? "Pass" : "Audit Required";
+                document.getElementById('auditAS').style.color = (asRevenueActual > energyOppCost) ? "var(--success)" : "var(--warning)";
+            }
+
+            function finalizeVerdict() {
+                const netCost = cumulativeGEA - cumulativeEnergy + cumulativePumping - cumulativeAS;
+                const ri = Math.max(0, netCost * 30) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+                let title = ri < 0.04 ? "✅ Consumer Friendly" : (ri < 0.10 ? "⚖️ Fair Value" : "⚠️ High Cost Pressure");
+                let body = `Analysis for ${PLANTS[currentPlant].name} (${currentYear} prices): The estimated rate impact is ₱${ri.toFixed(4)}/kWh. `;
+
+                if (ri < 0.04) {
+                    body += "This is GOOD for consumers. The revenue from energy trading and ancillary services significantly mitigates the capacity payment cost.";
+                } else {
+                    body += "The net cost is moderate. While it adds a small charge to the bill, the PSH provides critical grid stability and avoids more expensive peak generation.";
+                }
+
+                document.getElementById('verdictTitle').innerText = title;
+                document.getElementById('verdictBody').innerText = body;
+                document.getElementById('consumerVerdictCard').style.background = ri < 0.04 ? "#f0fdf4" : "#fffbeb";
+                document.getElementById('consumerVerdictCard').style.borderColor = ri < 0.04 ? "#22c55e" : "#f59e0b";
+
+                // Update Lifecycle Projection
+                document.getElementById('projDaily').innerText = `₱${netCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('projMonthly').innerText = `₱${(netCost * 30).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('projAnnual').innerText = `₱${(netCost * 365).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+                document.getElementById('proj20Year').innerText = `₱${(netCost * 365 * 20).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            }
+
+            function switchTab(tabId) {
+                // Hide all tab contents
+                const contents = document.querySelectorAll('.tab-content');
+                contents.forEach(content => {
+                    content.classList.remove('active');
+                    content.style.display = 'none';
+                });
+
+                // Deactivate all tab buttons
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => tab.classList.remove('active'));
+
+                // Show target content
+                const target = document.getElementById(tabId);
+                if (target) {
+                    target.classList.add('active');
+                    target.style.display = 'block';
+                }
+
+                // Activate corresponding tab button
+                tabs.forEach(tab => {
+                    const clickAttr = tab.getAttribute('onclick') || '';
+                    if (clickAttr.includes(`'${tabId}'`)) {
+                        tab.classList.add('active');
+                    }
+                });
+
+                // Update chart if switching to simulator to ensure it's properly sized
+                if (tabId === 'simulator' && pshChart) {
+                    pshChart.resize();
+                    pshChart.update();
+                }
+            }
+
+            let stressScenario = 'baseline';
+            function updateStressParam(type, val) {
+                if (type === 'gea') {
+                    nonFitGet = parseFloat(val);
+                    document.getElementById('valGET').innerText = nonFitGet.toFixed(4);
+                } else if (type === 'volatility') {
+                    const volVal = parseFloat(val);
+                    document.getElementById('valVol').innerText = volVal.toFixed(1);
+                    SEASONS.default.volatility = 1.1 * volVal;
+                } else if (type === 'scenario') {
+                    stressScenario = val;
+                    const badge = document.getElementById('scenarioBadge');
+                    badge.innerText = val.charAt(0).toUpperCase() + val.slice(1);
+                    if (val === 'heatwave') {
+                        SEASONS.default.volatility = 1.8;
+                        document.getElementById('slideVol').value = 1.6;
+                        document.getElementById('valVol').innerText = "1.6";
+                    } else if (val === 'baseline') {
+                        SEASONS.default.volatility = 1.1;
+                        document.getElementById('slideVol').value = 1.0;
+                        document.getElementById('valVol').innerText = "1.0";
+                    }
+                }
+                resetSim();
+                updateSensitivityChart();
+            }
+
+            function toggleMustRun() {
+                mustRunActive = !mustRunActive;
+                const btn = document.getElementById('btnMustRun');
+                btn.classList.toggle('active');
+                btn.style.background = mustRunActive ? 'var(--primary)' : '';
+                btn.style.color = mustRunActive ? '#fff' : '';
+                updateSensitivityChart();
+            }
+
+            function toggleZonalLMP() {
+                zonalLMPActive = !zonalLMPActive;
+                const btn = document.getElementById('btnZonal');
+                btn.classList.toggle('active');
+                btn.style.background = zonalLMPActive ? 'var(--primary)' : '';
+                btn.style.color = zonalLMPActive ? '#fff' : '';
+                updateSensitivityChart();
+            }
+
+            let sensitivityChartInstance = null;
+            function updateSensitivityChart() {
+                const canvas = document.getElementById('sensitivityChart');
+                if (!canvas) return;
+                const ctxS = canvas.getContext('2d');
+                const labels = [];
+                const riData = [];
+                const ciUpper = [];
+                const ciLower = [];
+
+                const p = PLANTS[currentPlant];
+                const hoursPerMonth = 30 * 24;
+                const avgPrice = HISTORICAL_PRICES[currentYear] || 5.0;
+                const volatility = SEASONS.default.volatility;
+
+                // Predictive Math if simulation hasn't run
+                for (let i = 0; i <= 10; i++) {
+                    const testGea = 1.5 + (i * (8 - 1.5) / 10);
+                    labels.push(testGea.toFixed(1));
+
+                    const monthlyGEA = p.capacity * 1000 * testGea * hoursPerMonth;
+                    const injPrice = avgPrice * (zonalLMPActive ? 1.5 : 1.3);
+                    const pumpPrice = avgPrice * 0.7 * (1 / volatility);
+
+                    const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
+                    const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6) * (mustRunActive ? 1.2 : 1.0);
+                    const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+
+                    const net = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                    const ri = Math.max(0, net) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+                    riData.push(ri.toFixed(4));
+                    ciUpper.push((ri * 1.15).toFixed(4));
+                    ciLower.push((ri * 0.85).toFixed(4));
+                }
+
+                const maxRI = Math.max(...riData);
+                document.getElementById('stressMaxRI').innerText = `₱${parseFloat(maxRI).toFixed(4)}`;
+                const prob = maxRI > 0.1 ? "⚠️ 65% PASS" : "✅ 100% PASS";
+                document.getElementById('complianceProb').innerText = prob;
+                document.getElementById('complianceProb').style.color = maxRI > 0.1 ? 'var(--danger)' : 'var(--success)';
+
+                if (sensitivityChartInstance) sensitivityChartInstance.destroy();
+                sensitivityChartInstance = new Chart(ctxS, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Rate Impact (₱/kWh)',
+                                data: riData,
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                fill: true,
+                                tension: 0.4,
+                                z: 10
+                            },
+                            {
+                                label: '95% CI Zone',
+                                data: ciUpper,
+                                borderColor: 'transparent',
+                                backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                                fill: '+1',
+                                pointRadius: 0,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Lower Bound',
+                                data: ciLower,
+                                borderColor: 'transparent',
+                                backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                                fill: false,
+                                pointRadius: 0,
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { title: { display: true, text: 'GEA Rate (PhP/kW)', font: { size: 8 } }, ticks: { font: { size: 7 } } },
+                            y: { title: { display: true, text: 'Impact', font: { size: 8 } }, ticks: { font: { size: 7 } }, min: 0 }
+                        }
+                    }
+                });
+            }
+
+            let roadmapChartInstance = null;
+            function populateRoadmap() {
+                const body = document.getElementById('roadmapTableBody');
+                if (!body) return;
+                body.innerHTML = '';
+                const avgPrice = HISTORICAL_PRICES[2025] || 4.80;
+                const pumpPrice = avgPrice * 0.8;
+                const injPrice = avgPrice * 1.3;
+                const hoursPerMonth = 30 * 24;
+
+                const years = [];
+                const capacities = [];
+                const unitCounts = [];
+                const impacts = [];
+
+                for (let year = 2028; year <= 2045; year++) {
+                    let totalRI = 0;
+                    let activeCount = 0;
+                    let activeCap = 0;
+
+                    Object.values(PLANTS).forEach(p => {
+                        if (year >= p.startYear) {
+                            activeCount++;
+                            activeCap += p.capacity;
+                            const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
+                            const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
+                            const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6);
+                            const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+                            const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                            totalRI += Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+                        }
+                    });
+
+                    if (activeCount > 0) {
+                        years.push(year);
+                        capacities.push(activeCap);
+                        unitCounts.push(activeCount);
+                        impacts.push(parseFloat(totalRI.toFixed(4)));
+
+                        body.innerHTML += `<tr>
+                                <td><strong>${year}</strong></td>
+                                <td>${activeCount} Units</td>
+                                <td>${activeCap} MW</td>
+                                <td style="text-align: right; font-weight: 600; color: var(--primary);">₱${totalRI.toFixed(4)}</td>
+                            </tr>`;
+                    }
+
+                    if (activeCount === Object.keys(PLANTS).length) {
+                        year += 1; // Show every year once all units are active
+                    }
+                }
+
+                // Render Roadmap Chart
+                const roadmapCtx = document.getElementById('roadmapChart').getContext('2d');
+                if (roadmapChartInstance) roadmapChartInstance.destroy();
+                roadmapChartInstance = new Chart(roadmapCtx, {
+                    type: 'line',
+                    data: {
+                        labels: years,
+                        datasets: [
+                            {
+                                label: 'Rate Impact (₱/kWh)',
+                                data: impacts,
+                                borderColor: '#2563eb',
+                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                yAxisID: 'y',
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'Total Capacity (MW)',
+                                data: capacities,
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                borderColor: '#10b981',
+                                type: 'bar',
+                                yAxisID: 'y1'
+                            },
+                            {
+                                label: 'Active Units',
+                                data: unitCounts,
+                                borderColor: '#f59e0b',
+                                borderDash: [5, 5],
+                                yAxisID: 'y2',
+                                tension: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: { title: { display: true, text: '₱/kWh' }, position: 'left' },
+                            y1: { title: { display: true, text: 'MW' }, position: 'right', grid: { display: false } },
+                            y2: { title: { display: true, text: 'Units' }, position: 'right', grid: { display: false }, min: 0, max: 10 }
+                        }
+                    }
+                });
+            }
+
+            function toggleSim() {
+                isSimulating = !isSimulating;
+                const btn = document.getElementById('playBtn');
+                if (isSimulating) {
+                    btn.innerText = "Stop Simulation";
+                    btn.style.background = "var(--danger)";
+                    simInterval = setInterval(step, 40);
+                } else {
+                    btn.innerText = "Resume Simulation";
+                    btn.style.background = "var(--primary)";
+                    clearInterval(simInterval);
+                }
+            }
+
+            // Finalized Initialization
+            populateTable();
+            populateRoadmap();
+            updatePlant();
+            updateSensitivityChart();
+        </script>
+    </div><!-- Close container -->
+</body>
+
+</html>
