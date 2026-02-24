@@ -14,6 +14,7 @@
     <style>
         :root {
             --primary: #2563eb;
+            --primary-dark: #1d4ed8;
             --primary-light: #eff6ff;
             --success: #10b981;
             --success-light: #ecfdf5;
@@ -21,12 +22,14 @@
             --warning-light: #fffbeb;
             --danger: #ef4444;
             --danger-light: #fef2f2;
-            --text-dark: #1e293b;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
-            --bg-body: #ffffff;
+            --bg-body: #f8fafc;
             --bg-card: #ffffff;
             --border-color: #e2e8f0;
-            --glass: rgba(255, 255, 255, 0.8);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
         * {
@@ -58,11 +61,20 @@
 
         header {
             display: flex;
+            flex-direction: row;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1.5rem;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding: 1.5rem 0;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.5rem;
+            }
         }
 
         .logo-section h1 {
@@ -351,35 +363,48 @@
         }
 
         .selection-bar {
-            display: flex;
-            gap: 2.5rem;
-            background: #f8fafc;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            background: #ffffff;
             border: 1px solid var(--border-color);
-            padding: 1.25rem 1.75rem;
-            border-radius: 1rem;
+            padding: 1.5rem;
+            border-radius: 1.25rem;
             margin-bottom: 2rem;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+            border-top: 4px solid var(--primary);
+            align-items: start;
         }
 
         .selection-item {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.5rem;
+            border-right: 1px solid #f1f5f9;
+            padding-right: 1.25rem;
+        }
+
+        .selection-item:last-child {
+            border-right: none;
+            padding-right: 0;
         }
 
         .selection-item .label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 600;
+            font-size: 0.6rem;
+            color: #64748b;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.075em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         .selection-item .value {
-            font-size: 1.125rem;
-            font-weight: 700;
+            font-size: 1rem;
+            font-weight: 800;
             color: var(--primary);
+            line-height: 1.3;
         }
 
         .chart-res-grid {
@@ -397,25 +422,62 @@
 
         .tabs {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             border-radius: 0.5rem;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
         }
 
         .tab.active {
-            background: var(--primary-light);
+            background: white;
             color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .selection-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
         }
 
         .tab-content {
@@ -456,10 +518,53 @@
             background: var(--primary-light);
         }
 
+
+
         .audit-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .audit-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .selection-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.25rem;
+                padding: 1.5rem;
+            }
+
+            .selection-item {
+                width: 100%;
+                border-bottom: 1px solid #f1f5f9;
+                padding-bottom: 0.75rem;
+            }
+
+            .selection-item:last-child {
+                border-bottom: none;
+            }
         }
 
         .audit-card {
@@ -527,22 +632,23 @@
         <div id="modalBody" style="font-size: 0.95rem; color: #4b5563;"></div>
     </div>
 
+
+
     <div class="container">
         <header>
             <div class="logo-section">
-                <h1>PSH·WESM Intelligence</h1>
-                <p>Settlement Simulator (OGCS-PROM+1623-2025 ANNEX B / Non-FIT GEAP)</p>
+                <h1>GEA3 Settle Mechanism Simulator</h1>
+                <p style="color: #2563eb; font-weight: 700; font-size: 1rem; margin-top: 0.25rem;">Franz Xyrlo I.
+                    Tobias, PEE</p>
+                <p style="font-size: 0.7rem; margin-top: 0.5rem; opacity: 0.7; color: var(--text-muted);">
+                    (OGCS-PROM+1623-2025 ANNEX B / Non-FIT GEAP)</p>
             </div>
-            <div class="controls">
+            <div id="pshHeaderControls" class="controls">
                 <div class="year-selector">
                     <span class="year-pill active" onclick="setYear(2025)">2025 (Forecast)</span>
                     <span class="year-pill" onclick="setYear(2024)">2024 (5.58)</span>
                     <span class="year-pill" onclick="setYear(2023)">2023 (6.44)</span>
                     <span class="year-pill" onclick="setYear(2022)">2022 (7.50)</span>
-                </div>
-                <div class="year-selector" style="margin-right: 1rem;">
-                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Grid Profile: Mixed
-                        Performance</span>
                 </div>
                 <select id="plantSelect" onchange="updatePlant()"
                     style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border-color); font-family: 'Inter'; font-size: 0.875rem; background: white;">
@@ -563,33 +669,35 @@
             </div>
         </header>
 
-        <div class="selection-bar" id="selectionBar">
+        <div id="pshSelectionBar" class="selection-bar">
             <div class="selection-item">
-                <div class="label">RE Developer</div>
+                <div class="label">🏢 RE Developer</div>
                 <div class="value" id="selDeveloper">-</div>
             </div>
             <div class="selection-item">
-                <div class="label">RE Facility Name</div>
+                <div class="label">⚡ RE Facility Name</div>
                 <div class="value" id="selFacility">-</div>
             </div>
             <div class="selection-item">
-                <div class="label">GEA3 Lot</div>
+                <div class="label">🏷️ GEA3 Lot</div>
                 <div class="value" id="selLot">-</div>
             </div>
             <div class="selection-item">
-                <div class="label">Non-FIT GEAP Price</div>
+                <div class="label">💰 Non-FIT GEAP Price</div>
                 <div class="value" id="selPrice">-</div>
             </div>
             <div class="selection-item">
-                <div class="label">Engineering Configuration</div>
+                <div class="label">⚙️ Engineering Configuration</div>
                 <div class="value" id="selConfig">-</div>
             </div>
         </div>
 
         <div class="tabs">
             <div class="tab active" onclick="switchTab('simulator')">PSH Simulator</div>
-            <div class="tab" onclick="switchTab('audit')">ERC Regulatory Audit</div>
+            <div class="tab" onclick="switchTab('geothermal')">GEA3 Geothermal</div>
+            <div class="tab" onclick="switchTab('impounding')">GEA3 Impounding Hydro</div>
             <div class="tab" onclick="switchTab('suppression')">WESM Price Suppression</div>
+            <div class="tab" onclick="switchTab('audit')">ERC Regulatory Audit</div>
         </div>
 
         <div id="simulator" class="tab-content active">
@@ -625,6 +733,25 @@
                     <div id="settlementStatus"
                         style="font-size: 0.75rem; margin-top: 0.25rem; color: var(--text-muted);">
                         Day-Ahead Projection</div>
+                </div>
+            </div>
+
+            <!-- PSH TAB DERATING CONTROL -->
+            <div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--warning);">
+                <div style="padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="flex: 1;">
+                        <span
+                            style="font-size: 0.75rem; font-weight: 700; color: var(--text-color); display: flex; align-items: center; gap: 0.5rem;">
+                            ⚠️ DERATING STRESSOR: Capacity Availability (%)
+                        </span>
+                        <input type="range" min="0" max="100" step="1" value="100" id="slideDerateTab"
+                            style="width: 100%; margin-top: 0.5rem;" oninput="updateStressParam('derate', this.value)">
+                    </div>
+                    <div style="margin-left: 2rem; text-align: right;">
+                        <div id="valDerateTab" style="font-size: 1.25rem; font-weight: 800; color: var(--warning);">100%
+                        </div>
+                        <div style="font-size: 0.6rem; color: var(--text-muted);">CURRENT PMAX ALLOWANCE</div>
+                    </div>
                 </div>
             </div>
 
@@ -739,9 +866,10 @@
                                 <thead>
                                     <tr>
                                         <th>Year</th>
-                                        <th>Active Units</th>
-                                        <th>Total Capacity</th>
-                                        <th style="text-align: right;">Cumulative Impact**</th>
+                                        <th style="color:#2563eb">PSH (₱)</th>
+                                        <th style="color:#8b5cf6">GEO (₱)</th>
+                                        <th style="color:#0ea5e9">HYD (₱)</th>
+                                        <th style="text-align: right;">Total (₱)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="roadmapTableBody">
@@ -988,8 +1116,23 @@
                                 <option value="baseline">Baseline Market Conditions</option>
                                 <option value="heatwave">Extreme Heat Wave (+30% Peak Demand)</option>
                                 <option value="curtailment">VRE Curtailment (Higher Volatility)</option>
-                                <option value="fault">Grid Fault (Must-Run Redispatch)</option>
+                                <option value="el_nino">El Niño (Impounding -60% Inflow)</option>
                             </select>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <label style="font-size: 0.7rem; font-weight: 600; color: #8b5cf6;">Geo Derate
+                                    (%)</label>
+                                <input type="range" min="50" max="100" step="1" value="100" style="width: 100%;"
+                                    oninput="updateStressParam('geoderate', this.value)">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.7rem; font-weight: 600; color: #0ea5e9;">Hyd Reserv.
+                                    (%)</label>
+                                <input type="range" min="20" max="100" step="1" value="80" style="width: 100%;"
+                                    oninput="updateStressParam('hydres', this.value)">
+                            </div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -1046,6 +1189,9 @@
                     </p>
                     <button class="calc-basis-btn" onclick="showInfo('audit_methodology')">📜 View Detailed
                         Methodology</button>
+                    <button class="calc-basis-btn"
+                        style="margin-top: 0.5rem; background: #059669; color: white; border: none;"
+                        onclick="generateAuditReport()">📂 Generate Regulatory Audit Report</button>
                 </div>
             </div>
         </div>
@@ -1099,13 +1245,75 @@
                                 relative cost of fossil fuels</p>
                         </div>
 
+                        <div>
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
+                                <span>Geothermal Expansion</span>
+                                <span id="valGeoPen" style="color: #8b5cf6;">500MW</span>
+                            </label>
+                            <input type="range" min="0" max="2000" step="100" value="500"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateSuppressionForecast('geo', this.value)">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Additional
+                                baseload supercritical geothermal</p>
+                        </div>
+
+                        <div>
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
+                                <span>Impounding Storage</span>
+                                <span id="valHydPen" style="color: #0ea5e9;">300MW</span>
+                            </label>
+                            <input type="range" min="0" max="1500" step="50" value="300"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateSuppressionForecast('hyd', this.value)">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Large-scale
+                                seasonal reservoir capacity</p>
+                        </div>
+                        <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-bottom: 1.5rem;">
+                            <h4
+                                style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 700;">
+                                Fossil Fuel Displacement Heatmap</h4>
+                            <div id="displacementHeatmap"
+                                style="display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; height: 35px;">
+                                <!-- Populated by JS -->
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 0.4rem;">
+                                <span style="font-size: 0.55rem; font-weight: 600; color: #64748b;">12 AM (Low)</span>
+                                <span style="font-size: 0.55rem; font-weight: 600; color: #f43f5e;">12 PM (Peak)</span>
+                                <span style="font-size: 0.55rem; font-weight: 600; color: #64748b;">11 PM (Low)</span>
+                            </div>
+                        </div>
                         <div
-                            style="margin-top: auto; background: var(--primary); padding: 1.25rem; border-radius: 0.75rem; color: white;">
-                            <div style="font-size: 0.65rem; text-transform: uppercase; font-weight: 600; opacity: 0.9;">
-                                Total System Savings</div>
-                            <div id="totalSavings20yr" style="font-size: 1.5rem; font-weight: 800; margin: 0.25rem 0;">
-                                ₱52.4 Billion</div>
-                            <div style="font-size: 0.6rem; opacity: 0.8;">Avoided WESM market costs across life-cycle
+                            style="margin-top: auto; padding: 1.25rem; border-radius: 0.75rem; background: #fff; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                            <div
+                                style="font-size: 0.65rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+                                20-Year Suppression Breakdown</div>
+
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-dark);">PSH Suppression</span>
+                                <span id="savingsPSH"
+                                    style="font-size: 0.75rem; font-weight: 700; color: var(--primary);">₱0.0 B</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-dark);">Geothermal (Baseload)</span>
+                                <span id="savingsGeo" style="font-size: 0.75rem; font-weight: 700; color: #8b5cf6;">₱0.0
+                                    B</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1.25rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-dark);">Impounding Hydro</span>
+                                <span id="savingsHyd" style="font-size: 0.75rem; font-weight: 700; color: #0ea5e9;">₱0.0
+                                    B</span>
+                            </div>
+
+                            <div
+                                style="background: var(--primary); padding: 0.85rem; border-radius: 0.6rem; color: white; text-align: center;">
+                                <div
+                                    style="font-size: 0.6rem; text-transform: uppercase; font-weight: 600; opacity: 0.9; margin-bottom: 0.15rem;">
+                                    Total Portfolio Suppression</div>
+                                <div id="totalSavings20yr"
+                                    style="font-size: 1.35rem; font-weight: 900; letter-spacing: -0.01em;">₱0.0 Billion
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1214,6 +1422,10 @@
                                 <th style="padding: 0.75rem;">Generating Asset</th>
                                 <th style="padding: 0.75rem;">Technology</th>
                                 <th style="padding: 0.75rem;">Current Grid Role</th>
+                                <th style="padding: 0.75rem; text-align: center;">Cap (MW)<sup
+                                        style="color:var(--primary)">[1]</sup></th>
+                                <th style="padding: 0.75rem; text-align: center;">Price (₱/kWh)<sup
+                                        style="color:var(--primary)">[2]</sup></th>
                                 <th style="padding: 0.75rem; text-align: right;">Probability of Displacement</th>
                             </tr>
                         </thead>
@@ -1222,6 +1434,453 @@
                         </tbody>
                     </table>
                 </div>
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+                    <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">
+                        <span style="color: var(--primary); font-weight: 700;">[1] Source:</span> DOE List of Existing
+                        Generating Facilities (Luzon/Visayas/Mindanao) - 2024 Update.<br>
+                        <span style="color: var(--primary); font-weight: 700;">[2] Source:</span> IEMOP Market
+                        Surveillance Unit (MSU) Fuel Proxy Annex & ERC Benchmark Costs for Oil-Based/Aging Coal Units
+                        (2023-2024).<br>
+                        <span style="font-style: italic;">*Displacement probability calculated via PSH Merit Order
+                            Neutralization modeling as per DOE DC2024-01-0003 Section 4.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- GEA3 GEOTHERMAL TAB CONTENT -->
+    <div id="geothermal" class="tab-content" style="display: none; padding: 2rem 0;">
+        <div class="card" style="border-top: 4px solid #8b5cf6; margin-bottom: 2rem;">
+            <div class="card-header">
+                <div class="card-title" style="color: #8b5cf6; font-weight: 800;">♨️ GEA3 Geothermal Winning Bidders
+                    (2025-2027)</div>
+                <div class="feature-badge" style="background: #f5f3ff; color: #5b21b6;">Baseload Indigenous</div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p
+                    style="font-size: 0.8125rem; color: var(--text-dark); margin-bottom: 1.5rem; line-height: 1.5; border-left: 3px solid #8b5cf6; padding-left: 0.75rem;">
+                    Geothermal projects in GEA3 provide supercritical baseload stability. Unlike PSH, these units offer
+                    a constant
+                    Pmax profile with zero fuel volatility risk, securing the grid's foundation.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;" id="geoGrid">
+                    <!-- Populated by script -->
+                </div>
+                <div
+                    style="margin-top: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-color);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h4 style="color: #5b21b6;">Supercritical 15-Minute Dispatch Sim</h4>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Real-time baseload thermal profile
+                                vs. WESM volatility</p>
+                        </div>
+                        <button class="primary-btn" id="playBtnGeo" onclick="toggleGeoSim()"
+                            style="background: #8b5cf6;">Start Baseload Cycle</button>
+                    </div>
+
+                    <!-- GEO TAB DERATING CONTROL -->
+                    <div
+                        style="background: rgba(139, 92, 246, 0.05); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 1px dashed #8b5cf6;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-size: 0.75rem; font-weight: 700; color: #5b21b6;">♨️ Thermal Derating
+                                Limit (%)</label>
+                            <span id="valGeoDerateTab"
+                                style="font-size: 0.9rem; font-weight: 800; color: #8b5cf6;">100%</span>
+                        </div>
+                        <input type="range" min="50" max="100" step="1" value="100" id="slideGeoDerateTab"
+                            style="width: 100%; margin-top: 0.5rem;"
+                            oninput="updateStressParam('geoderate', this.value)">
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Current
+                                Temp</div>
+                            <div id="geoTemp" style="font-size: 1.2rem; font-weight: 700; color: #8b5cf6;">320°C</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">
+                                Efficiency (η)</div>
+                            <div id="geoEff" style="font-size: 1.2rem; font-weight: 700; color: #10b981;">98.4%</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Market
+                                Revenue</div>
+                            <div id="geoRev" style="font-size: 1.2rem; font-weight: 700; color: var(--primary);">₱0
+                            </div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Grid
+                                Status</div>
+                            <div id="geoStatus" style="font-size: 0.9rem; font-weight: 700; color: #64748b;">STANDBY
+                            </div>
+                        </div>
+                    </div>
+                    <!-- WELLS TELEMETRY -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">
+                                Wellhead Pressure</div>
+                            <div id="geoWhp" style="font-size: 1.1rem; font-weight: 700; color: #6366f1;">0 psi</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Brine
+                                Reinjection</div>
+                            <div id="geoBrine" style="font-size: 1.1rem; font-weight: 700; color: #0ea5e9;">0 m³/h</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">NCG
+                                Content</div>
+                            <div id="geoNcg" style="font-size: 1.1rem; font-weight: 700; color: #64748b;">0.0%</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Steam
+                                Enthalpy</div>
+                            <div id="geoEnt" style="font-size: 1.1rem; font-weight: 700; color: #f43f5e;">0 kJ/kg</div>
+                        </div>
+                    </div>
+                    <!-- GEO ADVANCED TELEMETRY -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                        <div
+                            style="background: rgba(139, 92, 246, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed var(--primary);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">Makeup
+                                Wells Needed</div>
+                            <div id="geoMakeupWells" style="font-size: 1rem; font-weight: 800; color: #8b5cf6;">0 Units
+                            </div>
+                        </div>
+                        <div
+                            style="background: rgba(139, 92, 246, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed var(--primary);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Ambient Temp Derate</div>
+                            <div id="geoAmbDerate" style="font-size: 1rem; font-weight: 800; color: #f43f5e;">0.0%</div>
+                        </div>
+                        <div
+                            style="background: rgba(139, 92, 246, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed var(--primary);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">Flash
+                                Efficiency</div>
+                            <div id="geoFlashEff" style="font-size: 1rem; font-weight: 800; color: #10b981;">0.0%</div>
+                        </div>
+                        <div
+                            style="background: rgba(139, 92, 246, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed var(--primary);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">NCG
+                                Parasitic Load</div>
+                            <div id="geoNcgLoad" style="font-size: 1rem; font-weight: 800; color: #64748b;">0.00 MW
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Economic Merit Profile</div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="height: 300px;"><canvas id="geoChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">20-Year Grid Impact Roadmap</div>
+                </div>
+                <div style="padding: 1rem;">
+                    <canvas id="roadmapChartGeo" style="height: 200px; width: 100%; margin-bottom: 1.5rem;"></canvas>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="settlement-table" style="font-size: 0.75rem;">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th style="color:#2563eb">PSH (₱)</th>
+                                <th style="color:#8b5cf6">GEO (₱)</th>
+                                <th style="color:#0ea5e9">HYD (₱)</th>
+                                <th style="text-align: right;">Total (₱)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roadmapTableBodyGeo"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+                    <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">
+                        <span style="color: #8b5cf6; font-weight: 700;">Data Source:</span> GEA3 Notice of Award (DOE
+                        2025). Thermal efficiency curves based on Supercritical Flash Plant (Double-Flash) engineering
+                        benchmarks.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GEA3 IMPOUNDING HYDRO TAB CONTENT -->
+    <div id="impounding" class="tab-content" style="display: none; padding: 2rem 0;">
+        <div class="card" style="border-top: 4px solid #0ea5e9; margin-bottom: 2rem;">
+            <div class="card-header">
+                <div class="card-title" style="color: #0ea5e9; font-weight: 800;">🌊 GEA3 Impounding Hydro Winning
+                    Bidders (2028-2030)</div>
+                <div class="feature-badge" style="background: #f0f9ff; color: #075985;">Flexible Storage</div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p
+                    style="font-size: 0.8125rem; color: var(--text-dark); margin-bottom: 1.5rem; line-height: 1.5; border-left: 3px solid #0ea5e9; padding-left: 0.75rem;">
+                    Large-scale impounding hydro projects (Gened 1 & 2) act as massive seasonal buffers for the Luzon
+                    grid,
+                    providing significant Ancillary Services and displacement of mid-merit coal during wet seasons.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;" id="impoundGrid">
+                    <!-- Populated by script -->
+                </div>
+                <div
+                    style="margin-top: 2rem; background: #f0f9ff; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-color);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <h4 style="color: #075985;">Flexible 15-Minute Hydrological Sim</h4>
+                            <p style="font-size: 0.75rem; color: var(--text-muted);">Seasonal inflow management and
+                                mid-merit displacement</p>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <button class="primary-btn" id="playBtnImp" onclick="toggleImpSim()"
+                                style="background: #0ea5e9;">Start Hydro Cycle</button>
+                            <button class="secondary-btn" onclick="resetImpSim()"
+                                style="color: #075985; background: #e0f2fe;">Reset Hydro</button>
+                        </div>
+                    </div>
+
+                    <!-- IMP TAB DERATING CONTROL -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div
+                            style="background: rgba(14, 165, 233, 0.05); padding: 1.25rem; border-radius: 1rem; border: 1px dashed #0ea5e9;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <label style="font-size: 0.85rem; font-weight: 800; color: #075985;">🌊 Reservoir
+                                    Headwater Level (%)</label>
+                                <span id="valHydResTab"
+                                    style="font-size: 1.1rem; font-weight: 900; color: #0ea5e9;">80%</span>
+                            </div>
+                            <input type="range" min="20" max="100" step="1" value="80" id="slideHydResTab"
+                                style="width: 100%;" oninput="updateStressParam('hydres', this.value)">
+                            <p style="font-size: 0.7rem; color: #64748b; margin-top: 0.75rem;">Adjust head percentage to
+                                simulate seasonal drawdown and energy storage capability.</p>
+                        </div>
+
+                        <div
+                            style="background: white; padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                            <div
+                                style="font-size: 0.75rem; font-weight: 700; color: #075985; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                🌧️ Monthly Rainwater Projection (Gened Location)
+                            </div>
+                            <div style="height: 120px;">
+                                <canvas id="rainChartGened"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-Time Revenue Telemetry Card -->
+                    <div
+                        style="background: white; padding: 1.5rem; border-radius: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); margin-bottom: 1.5rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <div style="font-size: 0.75rem; font-weight: 800; color: #075985;">📉 REAL-TIME SETTLEMENT
+                                TELEMETRY (DAILY CYCLE)</div>
+                            <div id="impSimTime" style="font-size: 0.7rem; font-weight: 800; color: #0ea5e9;">00:00 H
+                            </div>
+                        </div>
+                        <div style="height: 200px;">
+                            <canvas id="impRevenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem;">
+                        <div
+                            style="background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Reservoir Head</div>
+                            <div id="impHead" style="font-size: 1.1rem; font-weight: 700; color: #0ea5e9;">120m</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Spillage Loss</div>
+                            <div id="impSpill" style="font-size: 1.1rem; font-weight: 700; color: var(--danger);">0 m³/s
+                            </div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">Inflow
+                                Source</div>
+                            <div id="impInflow" style="font-size: 1.1rem; font-weight: 700; color: #065f46;">85 m³/s
+                            </div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Accrued Revenue</div>
+                            <div id="impRev" style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">₱0
+                            </div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Dispatch Mode</div>
+                            <div id="impMode" style="font-size: 0.8rem; font-weight: 700; color: #64748b;">STANDBY</div>
+                        </div>
+                    </div>
+                    <!-- HYDRO DYNAMICS TELEMETRY -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Gate
+                                Opening</div>
+                            <div id="impGate" style="font-size: 1.1rem; font-weight: 700; color: #f59e0b;">0.0%</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">
+                                Tailwater Level</div>
+                            <div id="impTail" style="font-size: 1.1rem; font-weight: 700; color: #0ea5e9;">10.2m</div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">
+                                Specific Yield</div>
+                            <div id="impYield" style="font-size: 1.1rem; font-weight: 700; color: #059669;">2.4 kWh/m³
+                            </div>
+                        </div>
+                        <div
+                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">
+                                Penstock Velocity</div>
+                            <div id="impVel" style="font-size: 1.1rem; font-weight: 700; color: #2563eb;">0.0 m/s</div>
+                        </div>
+                    </div>
+                    <!-- HYDRO ADVANCED TELEMETRY -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
+                        <div
+                            style="background: rgba(14, 165, 233, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed #0ea5e9;">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Cascading Inflow Lag</div>
+                            <div id="impCascadingLag" style="font-size: 1rem; font-weight: 800; color: #0ea5e9;">15 min
+                            </div>
+                        </div>
+                        <div
+                            style="background: rgba(14, 165, 233, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed #0ea5e9;">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Reservoir Siltation</div>
+                            <div id="impSiltation" style="font-size: 1rem; font-weight: 800; color: #92400e;">0.0%</div>
+                        </div>
+                        <div
+                            style="background: rgba(14, 165, 233, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed #0ea5e9;">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Hydraulic Recovery</div>
+                            <div id="impHydRecov" style="font-size: 1rem; font-weight: 800; color: #10b981;">0.0%</div>
+                        </div>
+                        <div
+                            style="background: rgba(14, 165, 233, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed #0ea5e9;">
+                            <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
+                                Spillway Loss</div>
+                            <div id="impSpillLoss" style="font-size: 1rem; font-weight: 800; color: #f43f5e;">0.00 MWh
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Seasonal Hydrological Optimization</div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="height: 300px;"><canvas id="impoundChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">20-Year Grid Impact Roadmap</div>
+                </div>
+                <div style="padding: 1rem;">
+                    <canvas id="roadmapChartImp" style="height: 200px; width: 100%; margin-bottom: 1.5rem;"></canvas>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="settlement-table" style="font-size: 0.75rem;">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th style="color:#2563eb">PSH (₱)</th>
+                                <th style="color:#8b5cf6">GEO (₱)</th>
+                                <th style="color:#0ea5e9">HYD (₱)</th>
+                                <th style="text-align: right;">Total (₱)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roadmapTableBodyImp"></tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+                    <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">
+                        <span style="color: #0ea5e9; font-weight: 700;">Data Source:</span> Gened 1 & 2 Technical
+                        Specifications (Pan Pacific Hydro / DOE GEA3 Lot 6-8). Seasonal inflow models based on PAGASA
+                        Hydrological Forecast Units.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- MASTER REGULATORY REFERENCES SECTION -->
+        <div class="card"
+            style="border-top: 4px solid #64748b; margin-top: 2rem; background: #f8fafc; margin-bottom: 2rem;">
+            <div class="card-header">
+                <div class="card-title" style="color: #334155; font-weight: 800;">📚 Regulatory Data Integrity &
+                    Citations</div>
+            </div>
+            <div style="padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h4 style="font-size: 0.75rem; text-transform: uppercase; color: #475569; margin-bottom: 1rem;">
+                        Policy & Legal Framework</h4>
+                    <ul style="font-size: 0.75rem; color: #64748b; list-style: none; padding: 0;">
+                        <li style="margin-bottom:0.75rem;">• <strong style="color:#334155;">DOE DC2024-01-0003:</strong>
+                            Supplemental Policy on Pumped Storage and Kalayaan Pumped Storage Power Plant (KPSPP).</li>
+                        <li style="margin-bottom:0.75rem;">• <strong style="color:#334155;">DOE DC2023-01-0001:</strong>
+                            Implementing Guidelines for the GEA3 Green Energy Auction for Non-FIT Assets.</li>
+                        <li style="margin-bottom:0.75rem;">• <strong style="color:#334155;">ERC Case 2023-011
+                                RC:</strong> Guidelines for the Recovery of Ancillary Services Costs by the System
+                            Operator.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-size: 0.75rem; text-transform: uppercase; color: #475569; margin-bottom: 1rem;">
+                        Market Data & Engineering Benchmarks</h4>
+                    <ul style="font-size: 0.75rem; color: #64748b; list-style: none; padding: 0;">
+                        <li style="margin-bottom:0.75rem;">• <strong style="color:#334155;">WESM Prices:</strong>
+                            IEMOP Historical Market Reports & SMR Statistics (2022-2025).</li>
+                        <li style="margin-bottom:0.75rem;">• <strong style="color:#334155;">Carbon Emission
+                                Factor:</strong> 0.7 tCO2/MWh per DENR-EMB Philippines National Grid Emission Factor
+                            (PGEF).</li>
+                        <li style="margin-bottom:0.75rem;">• <strong style="color:#334155;">VOLL (Value of Lost
+                                Load):</strong> ₱20,000/MWh benchmark as per ERC Reliability Standards and National Grid
+                            Code.</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; font-size: 0.65rem; color: #94a3b8;">
+                Disclaimer: This simulator is a regulatory analysis tool designed for portfolio impact assessment and
+                does not replace actual billing settlements under the WESM Rules. All PSH/GEO/IMP values are based on
+                final GEA3 winning bid disclosures.
             </div>
         </div>
     </div>
@@ -1231,15 +1890,25 @@
     </div>
 
     <script>
-        // GEA3 Plant Data from Official Screenshots
+        // GEA3 Plant Data from Official Notice of Award
         const PLANTS = {
-            kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, units: 2, unitCap: 250, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028 },
-            wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, units: 3, unitCap: 200, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029 },
-            pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, units: 4, unitCap: 350, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030 },
-            sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, units: 2, unitCap: 400, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031 },
-            sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, units: 2, unitCap: 400, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032 },
-            maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, units: 4, unitCap: 500, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033 },
-            aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, units: 2, unitCap: 125, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034 }
+            // PSH Units
+            kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, units: 2, unitCap: 250, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028, type: 'PSH' },
+            wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, units: 3, unitCap: 200, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029, type: 'PSH' },
+            pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, units: 4, unitCap: 350, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030, type: 'PSH' },
+            sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, units: 2, unitCap: 400, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031, type: 'PSH' },
+            sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, units: 2, unitCap: 400, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032, type: 'PSH' },
+            maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, units: 4, unitCap: 500, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033, type: 'PSH' },
+            aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, units: 2, unitCap: 125, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034, type: 'PSH' },
+
+            // Geothermal Units (Extracted from NOA)
+            mindanao3: { developer: "EDC", name: "Mindanao 3 Binary", capacity: 3.669, units: 1, unitCap: 3.669, rate: 5.0512, group: "2025-2027", lot: "GEO-1", startYear: 2025, type: 'GEO' },
+            tanawon: { developer: "Bac-Man Geothermal", name: "Tanawon Unit 1", capacity: 21.573, units: 1, unitCap: 21.573, rate: 4.8821, group: "2025-2027", lot: "GEO-1", startYear: 2026, type: 'GEO' },
+            bago: { developer: "EDC", name: "Bago Binary Unit 1", capacity: 5.645, units: 1, unitCap: 5.645, rate: 5.2210, group: "2025-2027", lot: "GEO-1", startYear: 2027, type: 'GEO' },
+
+            // Impounding Units (Extracted from NOA)
+            gened1: { developer: "Pan Pacific", name: "Gened 1 Hydro", capacity: 150.0, units: 1, unitCap: 150.0, rate: 4.2500, group: "2028-2030", lot: "HYD-1", startYear: 2028, type: 'IMP' },
+            gened2: { developer: "Pan Pacific", name: "Gened 2 Hydro", capacity: 150.0, units: 1, unitCap: 150.0, rate: 4.3500, group: "2028-2030", lot: "HYD-2", startYear: 2029, type: 'IMP' }
         };
 
         const HISTORICAL_PRICES = {
@@ -1266,6 +1935,9 @@
         let currentInterval = 0;
         let isSimulating = false;
         let simInterval;
+        let pshHistory = [];
+        let gened1DischargeHistory = Array(4).fill(40); // For cascading logic
+
         let currentYear = 2025;
         // currentSeason is already declared above with 'default' 
 
@@ -1282,6 +1954,24 @@
         let zonalLMPActive = false;
         let pshDerateFactor = 1.0;
         let marketPriceScalar = 1.0;
+
+        // GEA3 Expansion Variables
+        let geoPenetration = 500;
+        let hydPenetration = 300;
+        let geoDerateLimit = 1.0;
+        let hydReservoirLevel = 0.8;
+
+        let geoSimInterval;
+        let isGeoSimulating = false;
+        let geoCumulativeRev = 0;
+        let geoCurrentInterval = 0;
+
+        let impSimInterval;
+        let isImpSimulating = false;
+        let impCumulativeRev = 0;
+        let impCurrentInterval = 0;
+        let impRevenueChart = null;
+
 
         // Initialize Chart
         const ctx = document.getElementById('pshChart').getContext('2d');
@@ -1546,8 +2236,6 @@
             if (ri < 0.04) { badge.innerText = "GOOD"; badge.style.background = "#dcfce7"; badge.style.color = "#166534"; }
             else { badge.innerText = "MODERATE"; badge.style.background = "#fef3c7"; badge.style.color = "#92400e"; }
 
-            // Update Audit Tab Metrics
-            // RTE must be physical energy efficiency (Energy Out / Energy In), not monetary
             const physicalRte = totalMWhPump > 0 ? (totalMWhGen / totalMWhPump) : 0;
             document.getElementById('auditRTE').innerText = `${(physicalRte * 100).toFixed(1)}%`;
             const rteStatus = document.getElementById('rteStatus');
@@ -1600,6 +2288,12 @@
         }
 
         function switchTab(tabId) {
+            // Hide/Show PSH specific controls
+            const pshControls = document.getElementById('pshHeaderControls');
+            const pshSelection = document.getElementById('pshSelectionBar');
+            if (pshControls) pshControls.style.display = (tabId === 'simulator') ? 'flex' : 'none';
+            if (pshSelection) pshSelection.style.display = (tabId === 'simulator') ? 'grid' : 'none';
+
             // Hide all tab contents
             const contents = document.querySelectorAll('.tab-content');
             contents.forEach(content => {
@@ -1635,11 +2329,56 @@
                 updateDisplacementTable();
             }
 
+            if (tabId === 'geothermal') {
+                populateGeoTab();
+                populateRoadmap('GEO');
+            }
+            if (tabId === 'impounding') {
+                populateImpTab();
+                populateRoadmap('IMP');
+                initRainChartGened();
+            }
+
             // Handle simulator chart resizing
             if (tabId === 'simulator' && pshChart) {
                 pshChart.resize();
                 pshChart.update();
             }
+        }
+
+        let rainChartGened = null;
+        function initRainChartGened() {
+            const canvas = document.getElementById('rainChartGened');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (rainChartGened) rainChartGened.destroy();
+
+            rainChartGened = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Avg Rainfall (mm)',
+                        data: [55, 45, 60, 95, 230, 310, 420, 450, 380, 290, 160, 85],
+                        backgroundColor: (context) => {
+                            const val = context.raw;
+                            return val > 300 ? 'rgba(14, 165, 233, 0.6)' : 'rgba(14, 165, 233, 0.2)';
+                        },
+                        borderColor: '#0ea5e9',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, display: false },
+                        x: { grid: { display: false }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
         }
 
         let stressScenario = 'baseline';
@@ -1659,15 +2398,42 @@
                     SEASONS.default.volatility = 1.8;
                     document.getElementById('slideVol').value = 1.6;
                     document.getElementById('valVol').innerText = "1.6";
+                } else if (val === 'el_nino') {
+                    hydReservoirLevel = 0.3;
+                    geoDerateLimit = 0.85;
+                    SEASONS.default.volatility = 1.4;
+                    document.getElementById('slideVol').value = 1.2;
+                    document.getElementById('valVol').innerText = "1.2";
+                    if (document.getElementById('slideGeoDerateTab')) document.getElementById('slideGeoDerateTab').value = 85;
+                    if (document.getElementById('valGeoDerateTab')) document.getElementById('valGeoDerateTab').innerText = "85%";
+                    if (document.getElementById('slideHydResTab')) document.getElementById('slideHydResTab').value = 30;
+                    if (document.getElementById('valHydResTab')) document.getElementById('valHydResTab').innerText = "30%";
                 } else if (val === 'baseline') {
                     SEASONS.default.volatility = 1.1;
                     document.getElementById('slideVol').value = 1.0;
                     document.getElementById('valVol').innerText = "1.0";
+                    hydReservoirLevel = 0.8;
+                    geoDerateLimit = 1.0;
+                    if (document.getElementById('slideGeoDerateTab')) document.getElementById('slideGeoDerateTab').value = 100;
+                    if (document.getElementById('valGeoDerateTab')) document.getElementById('valGeoDerateTab').innerText = "100%";
+                    if (document.getElementById('slideHydResTab')) document.getElementById('slideHydResTab').value = 80;
+                    if (document.getElementById('valHydResTab')) document.getElementById('valHydResTab').innerText = "80%";
                 }
             } else if (type === 'derate') {
                 pshDerateFactor = parseFloat(val) / 100;
                 document.getElementById('valDerate').innerText = val + "%";
+                document.getElementById('valDerateTab').innerText = val + "%";
                 document.getElementById('valDerate').style.color = val < 100 ? 'var(--danger)' : 'var(--success)';
+                document.getElementById('slideDerate').value = val;
+                document.getElementById('slideDerateTab').value = val;
+            } else if (type === 'geoderate') {
+                geoDerateLimit = parseFloat(val) / 100;
+                if (document.getElementById('valGeoDerateTab')) document.getElementById('valGeoDerateTab').innerText = val + "%";
+                if (document.getElementById('slideGeoDerateTab')) document.getElementById('slideGeoDerateTab').value = val;
+            } else if (type === 'hydres') {
+                hydReservoirLevel = parseFloat(val) / 100;
+                if (document.getElementById('valHydResTab')) document.getElementById('valHydResTab').innerText = val + "%";
+                if (document.getElementById('slideHydResTab')) document.getElementById('slideHydResTab').value = val;
             } else if (type === 'scalar') {
                 marketPriceScalar = parseFloat(val);
                 document.getElementById('valScalar').innerText = marketPriceScalar.toFixed(1) + "x";
@@ -1736,6 +2502,16 @@
             document.getElementById('complianceProb').innerText = prob;
             document.getElementById('complianceProb').style.color = maxRI > 0.1 ? 'var(--danger)' : 'var(--success)';
 
+            // Compliance Probability Heuristic based on Rate Impact and Portfolio Stress
+            const avgRI = riData.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / riData.length;
+            const portfolioStress = (1 - geoDerateLimit) * 20 + (1 - hydReservoirLevel) * 30;
+            const complianceProb = Math.max(0, 100 - (avgRI * 1500) - (mustRunActive ? 15 : 0) - (zonalLMPActive ? 10 : 0) - portfolioStress);
+
+            document.getElementById('complianceProb').innerText = `${complianceProb.toFixed(0)}% AUDIT PASS PROB`;
+            document.getElementById('complianceProb').style.color = complianceProb > 70 ? 'var(--success)' : (complianceProb > 40 ? 'var(--warning)' : 'var(--danger)');
+
+            document.getElementById('stressMaxRI').innerText = `₱${parseFloat(ciUpper[ciUpper.length - 1]).toFixed(4)}`;
+
             if (sensitivityChartInstance) sensitivityChartInstance.destroy();
             sensitivityChartInstance = new Chart(ctxS, {
                 type: 'line',
@@ -1784,10 +2560,17 @@
         }
 
         let roadmapChartInstance = null;
-        function populateRoadmap() {
-            const body = document.getElementById('roadmapTableBody');
+        let roadmapChartGeo = null;
+        let roadmapChartImp = null;
+
+        function populateRoadmap(type = 'PSH') {
+            const bodyId = type === 'PSH' ? 'roadmapTableBody' : (type === 'GEO' ? 'roadmapTableBodyGeo' : 'roadmapTableBodyImp');
+            const canvasId = type === 'PSH' ? 'roadmapChart' : (type === 'GEO' ? 'roadmapChartGeo' : 'roadmapChartImp');
+
+            const body = document.getElementById(bodyId);
             if (!body) return;
             body.innerHTML = '';
+
             const avgPrice = HISTORICAL_PRICES[2025] || 4.80;
             const pumpPrice = avgPrice * 0.8;
             const injPrice = avgPrice * 1.3;
@@ -1798,75 +2581,96 @@
             const unitCounts = [];
             const impacts = [];
 
-            for (let year = 2028; year <= 2045; year++) {
-                let totalRI = 0;
+            const startY = type === 'GEO' ? 2025 : 2028;
+
+            for (let year = startY; year <= 2045; year++) {
+                let pshRI = 0, geoRI = 0, impRI = 0;
+                let totalActiveCap = 0;
                 let activeCount = 0;
-                let activeCap = 0;
+
+                // Advanced 20-Year Factors
+                const yearsPassed = year - 2025;
+                const whpDecline = Math.pow(0.992, yearsPassed); // 0.8% decline per year
+                const siltationFactor = Math.pow(0.998, yearsPassed); // 0.2% loss per year
 
                 Object.values(PLANTS).forEach(p => {
                     if (year >= p.startYear) {
                         activeCount++;
-                        activeCap += p.capacity;
-                        const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
-                        const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
-                        const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6);
-                        const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
-                        const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
-                        totalRI += Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+                        if (p.type === 'PSH') {
+                            totalActiveCap += p.capacity;
+                            const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
+                            const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
+                            const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6);
+                            const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+                            const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                            pshRI += Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+                        } else if (p.type === 'GEO') {
+                            const actualCap = p.capacity * whpDecline;
+                            totalActiveCap += actualCap;
+                            const monthlyGEA = actualCap * 1000 * p.rate * hoursPerMonth;
+                            const monthlyMkt = actualCap * 1000 * avgPrice * hoursPerMonth;
+                            geoRI += Math.max(0, monthlyGEA - monthlyMkt) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+                        } else if (p.type === 'IMP') {
+                            const actualCap = p.capacity * siltationFactor;
+                            totalActiveCap += actualCap;
+                            const monthlyGEA = actualCap * 1000 * p.rate * hoursPerMonth;
+                            const monthlyMkt = actualCap * 1000 * avgPrice * hoursPerMonth;
+                            impRI += Math.max(0, monthlyGEA - monthlyMkt) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+                        }
                     }
                 });
 
+                const totalPortfolioRI = pshRI + geoRI + impRI;
+
                 if (activeCount > 0) {
                     years.push(year);
-                    capacities.push(activeCap);
-                    unitCounts.push(activeCount);
-                    impacts.push(parseFloat(totalRI.toFixed(4)));
+                    capacities.push(totalActiveCap);
+                    impacts.push(parseFloat(totalPortfolioRI.toFixed(4)));
 
-                    body.innerHTML += `<tr>
-                                <td><strong>${year}</strong></td>
-                                <td>${activeCount} Units</td>
-                                <td>${activeCap} MW</td>
-                                <td style="text-align: right; font-weight: 600; color: var(--primary);">₱${totalRI.toFixed(4)}</td>
-                            </tr>`;
+                    let rowHtml = `<td><strong>${year}</strong></td>`;
+                    rowHtml += `<td style="color:#2563eb">₱${pshRI.toFixed(4)}</td>`;
+                    rowHtml += `<td style="color:#8b5cf6">₱${geoRI.toFixed(4)}</td>`;
+                    rowHtml += `<td style="color:#0ea5e9">₱${impRI.toFixed(4)}</td>`;
+                    rowHtml += `<td style="text-align: right; font-weight: 800; color: var(--primary);">₱${totalPortfolioRI.toFixed(4)}</td>`;
+                    body.innerHTML += `<tr>${rowHtml}</tr>`;
                 }
 
-                if (activeCount === Object.keys(PLANTS).length) {
-                    year += 1; // Show every year once all units are active
+                const allDone = Object.values(PLANTS).every(p => year >= p.startYear);
+                if (allDone) {
+                    year += 1;
                 }
             }
 
-            // Render Roadmap Chart
-            const roadmapCtx = document.getElementById('roadmapChart').getContext('2d');
-            if (roadmapChartInstance) roadmapChartInstance.destroy();
-            roadmapChartInstance = new Chart(roadmapCtx, {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            let instance;
+            if (type === 'PSH') instance = roadmapChartInstance;
+            else if (type === 'GEO') instance = roadmapChartGeo;
+            else instance = roadmapChartImp;
+
+            if (instance) instance.destroy();
+
+            const newInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: years,
                     datasets: [
                         {
-                            label: 'Rate Impact (₱/kWh)',
+                            label: 'Total Rate Impact (₱/kWh)',
                             data: impacts,
-                            borderColor: '#2563eb',
+                            borderColor: 'var(--primary)',
                             backgroundColor: 'rgba(37, 99, 235, 0.1)',
                             yAxisID: 'y',
                             tension: 0.3,
                             fill: true
                         },
                         {
-                            label: 'Total Capacity (MW)',
+                            label: 'Total GEA3 Portfolio (MW)',
                             data: capacities,
                             backgroundColor: 'rgba(16, 185, 129, 0.2)',
                             borderColor: '#10b981',
                             type: 'bar',
                             yAxisID: 'y1'
-                        },
-                        {
-                            label: 'Active Units',
-                            data: unitCounts,
-                            borderColor: '#f59e0b',
-                            borderDash: [5, 5],
-                            yAxisID: 'y2',
-                            tension: 0
                         }
                     ]
                 },
@@ -1875,11 +2679,14 @@
                     interaction: { mode: 'index', intersect: false },
                     scales: {
                         y: { title: { display: true, text: '₱/kWh' }, position: 'left' },
-                        y1: { title: { display: true, text: 'MW' }, position: 'right', grid: { display: false } },
-                        y2: { title: { display: true, text: 'Units' }, position: 'right', grid: { display: false }, min: 0, max: 10 }
+                        y1: { title: { display: true, text: 'MW' }, position: 'right', grid: { display: false } }
                     }
                 }
             });
+
+            if (type === 'PSH') roadmapChartInstance = newInstance;
+            else if (type === 'GEO') roadmapChartGeo = newInstance;
+            else roadmapChartImp = newInstance;
         }
 
         function toggleSim() {
@@ -1914,21 +2721,38 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Baseline (Without PSH)',
-                            data: generateSuppressionData(false),
+                            label: 'Baseline (Without GEA3)',
+                            data: generateSuppressionData('baseline'),
                             borderColor: '#94a3b8',
-                            backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                            backgroundColor: 'rgba(148, 163, 184, 0.05)',
                             borderDash: [5, 5],
                             fill: true,
                             tension: 0.3,
                             pointRadius: 0
                         },
                         {
-                            label: 'With PSH Suppression',
-                            data: generateSuppressionData(true),
+                            label: 'After Geothermal',
+                            data: generateSuppressionData('geo'),
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'After Impounding',
+                            data: generateSuppressionData('hyd'),
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'After PSH (Portfolio Total)',
+                            data: generateSuppressionData('total'),
                             borderColor: '#2563eb',
-                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                            borderDash: [],
+                            backgroundColor: 'rgba(37, 99, 235, 0.15)',
                             fill: true,
                             tension: 0.3,
                             pointRadius: 3,
@@ -1951,17 +2775,24 @@
             });
         }
 
-        function generateSuppressionData(withPSH) {
+        function generateSuppressionData(layer) {
             const data = [];
             let basePrice = 5.50 * fuelTrend;
             for (let i = 0; i <= 20; i++) {
                 const inflation = Math.pow(1.025, i);
                 const vreVol = (vrePenetration * 1.5 * i / 20);
                 let price = basePrice * inflation + vreVol;
-                if (withPSH) {
-                    const benefit = (0.5 + (vrePenetration * 2.5)) * (i > 5 ? 1.2 : 0.6);
-                    price -= benefit;
-                }
+
+                let benefit = 0;
+                const geoBen = (geoPenetration / 1000 * 0.4) * (i > 2 ? 1 : 0);
+                const hydBen = (hydPenetration / 1000 * 0.6) * (i > 4 ? 1 : 0);
+                const pshBen = (0.5 + vrePenetration * 2.5) * (i > 5 ? 1.2 : 0.6);
+
+                if (layer === 'geo') benefit = geoBen;
+                if (layer === 'hyd') benefit = geoBen + hydBen;
+                if (layer === 'total') benefit = geoBen + hydBen + pshBen;
+
+                price -= benefit;
                 data.push(Math.max(3.8, price));
             }
             return data;
@@ -1969,13 +2800,17 @@
 
         // Conventional Asset Displacement Logic
         const CONVENTIONAL_PLANTS = [
-            { name: "Malaya Thermal Units 1 & 2", type: "Oil/Bunker", region: "Luzon", role: "Peaker / MRU", cap: 650 },
-            { name: "Naga Complex (Oil)", type: "Diesel", region: "Visayas", role: "Peaker / AS", cap: 100 },
-            { name: "Limay Diesel Plant", type: "Bunker C", region: "Luzon", role: "Peak Load", cap: 110 },
-            { name: "Masinloc Unit 1 (Aging)", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 300 },
-            { name: "Power Barge 101, 102", type: "Diesel", region: "Vis/Min", role: "Emergency / AS", cap: 64 },
-            { name: "Bauang Diesel (1590)", type: "Diesel", region: "Luzon", role: "Peaking", cap: 215 },
-            { name: "Calaca Unit 1 (Old)", type: "Coal", region: "Luzon", role: "Baseload", cap: 300 }
+            { name: "Malaya Thermal Units 1 & 2", type: "Oil/Bunker", region: "Luzon", role: "Peaker / MRU", cap: 650, rate: 18.50 },
+            { name: "Sual Coal Unit 1 (Aging)", type: "Coal", region: "Luzon", role: "Baseload", cap: 600, rate: 5.80 },
+            { name: "Pagbilao Unit 1 (Aging)", type: "Coal", region: "Luzon", role: "Baseload", cap: 350, rate: 6.20 },
+            { name: "Naga Complex (Oil)", type: "Diesel", region: "Visayas", role: "Peaker / AS", cap: 100, rate: 22.40 },
+            { name: "Limay Diesel Plant", type: "Bunker C", region: "Luzon", role: "Peak Load", cap: 110, rate: 19.80 },
+            { name: "Masinloc Unit 1 (Old)", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 300, rate: 6.45 },
+            { name: "Sta. Rita (Natural Gas)", type: "Gas", region: "Luzon", role: "Mid-Merit", cap: 250, rate: 8.75 },
+            { name: "San Lorenzo (Natural Gas)", type: "Gas", region: "Luzon", role: "Mid-Merit", cap: 250, rate: 8.90 },
+            { name: "Power Barge 101, 102", type: "Diesel", region: "Vis/Min", role: "Emergency / AS", cap: 64, rate: 25.10 },
+            { name: "Bauang Diesel (1590)", type: "Diesel", region: "Luzon", role: "Peaking", cap: 215, rate: 17.60 },
+            { name: "Calaca Unit 1 (Old)", type: "Coal", region: "Luzon", role: "Baseload", cap: 300, rate: 6.15 }
         ];
 
         function updateDisplacementTable() {
@@ -1988,9 +2823,10 @@
                 let baseRisk = (plant.type.includes("Oil") || plant.type.includes("Diesel") || plant.type.includes("Bunker")) ? 65 : 15;
                 let fuelMultiplier = plant.type.includes("Coal") ? (fuelTrend * 5) : (fuelTrend * 15);
                 let vreImpact = vrePenetration * 45;
+                let portfolioImpact = (geoPenetration / 100) + (hydPenetration / 400) * 15;
 
-                let probability = Math.min(99, baseRisk + fuelMultiplier + vreImpact);
-                if (plant.role === "Baseload") probability = Math.min(40, vrePenetration * 80);
+                let probability = Math.min(99, baseRisk + fuelMultiplier + vreImpact + portfolioImpact);
+                if (plant.role === "Baseload") probability = Math.min(60, (vrePenetration * 80) + (geoPenetration / 5));
 
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid var(--border-color)';
@@ -1998,6 +2834,8 @@
                     <td style="padding: 0.75rem;"><strong>${plant.name}</strong><br><small style="color:var(--text-muted)">${plant.region}</small></td>
                     <td style="padding: 0.75rem;">${plant.type}</td>
                     <td style="padding: 0.75rem;">${plant.role}</td>
+                    <td style="padding: 0.75rem; text-align: center;">${plant.cap} MW</td>
+                    <td style="padding: 0.75rem; text-align: center;">₱${plant.rate.toFixed(2)}</td>
                     <td style="padding: 0.75rem; text-align: right;">
                         <span class="feature-badge" style="background: ${probability > 60 ? '#fef2f2' : '#f0fdf4'}; color: ${probability > 60 ? '#991b1b' : '#166534'};">
                             ${probability.toFixed(0)}% Displaced
@@ -2015,28 +2853,354 @@
             } else if (type === 'fuel') {
                 fuelTrend = parseFloat(val);
                 document.getElementById('valFuel').innerText = val + "x";
+            } else if (type === 'geo') {
+                geoPenetration = parseFloat(val);
+                document.getElementById('valGeoPen').innerText = val + "MW";
+            } else if (type === 'hyd') {
+                hydPenetration = parseFloat(val);
+                document.getElementById('valHydPen').innerText = val + "MW";
             }
             if (suppressionChart20yr) {
-                suppressionChart20yr.data.datasets[0].data = generateSuppressionData(false);
-                suppressionChart20yr.data.datasets[1].data = generateSuppressionData(true);
+                suppressionChart20yr.data.datasets[0].data = generateSuppressionData('baseline');
+                suppressionChart20yr.data.datasets[1].data = generateSuppressionData('geo');
+                suppressionChart20yr.data.datasets[2].data = generateSuppressionData('hyd');
+                suppressionChart20yr.data.datasets[3].data = generateSuppressionData('total');
                 suppressionChart20yr.update();
 
                 const baseline = suppressionChart20yr.data.datasets[0].data;
-                const psh = suppressionChart20yr.data.datasets[1].data;
-                let totalDelta = 0;
-                baseline.forEach((v, i) => totalDelta += (v - psh[i]));
-                // 20-year aggregate savings across 2,000MW cluster
-                const savingsBillions = (totalDelta * 1400 * 365 * 10) / 1e9;
-                document.getElementById('totalSavings20yr').innerText = `₱${savingsBillions.toFixed(1)} Billion`;
+                const total = suppressionChart20yr.data.datasets[3].data;
+                const geoL = suppressionChart20yr.data.datasets[1].data;
+                const hydL = suppressionChart20yr.data.datasets[2].data;
 
-                // Update displacement table in parallel
+                let totalDelta = 0;
+                let geoDelta = 0;
+                let hydDelta = 0;
+                let pshDelta = 0;
+
+                baseline.forEach((v, i) => {
+                    geoDelta += (v - geoL[i]);
+                    hydDelta += (geoL[i] - hydL[i]);
+                    pshDelta += (hydL[i] - total[i]);
+                    totalDelta += (v - total[i]);
+                });
+
+                const totalCap = (1400 + geoPenetration + hydPenetration);
+                const savingsBase = totalCap * 365 * 10 / 1e9;
+
+                document.getElementById('totalSavings20yr').innerText = `₱${(totalDelta * savingsBase).toFixed(1)} Billion`;
+                document.getElementById('savingsPSH').innerText = `₱${(pshDelta * savingsBase).toFixed(1)} B`;
+                document.getElementById('savingsGeo').innerText = `₱${(geoDelta * savingsBase).toFixed(1)} B`;
+                document.getElementById('savingsHyd').innerText = `₱${(hydDelta * savingsBase).toFixed(1)} B`;
+
                 updateDisplacementTable();
             }
         }
 
+        // GEA3 Geothermal & Impounding Logic
+        function populateGeoTab() {
+            const grid = document.getElementById('geoGrid');
+            grid.innerHTML = '';
+            Object.values(PLANTS).filter(p => p.type === 'GEO').forEach(p => {
+                grid.innerHTML += `
+                    <div class="audit-card" style="background:#fff; border: 1px solid var(--border-color); padding: 1.25rem;">
+                        <h4 style="color:#8b5cf6;">${p.name}</h4>
+                        <p style="font-size:0.75rem; color:var(--text-muted);">${p.developer}</p>
+                        <div style="font-size:1.1rem; font-weight:700; margin:0.5rem 0;">${p.capacity} MW</div>
+                        <div style="font-size:0.7rem; color:var(--primary);">Bid: ₱${p.rate.toFixed(4)}/kWh</div>
+                    </div>
+                `;
+            });
+            initGeoChart();
+        }
+
+        function populateImpTab() {
+            const grid = document.getElementById('impoundGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            Object.values(PLANTS).filter(p => p.type === 'IMP').forEach(p => {
+                grid.innerHTML += `
+                    <div style="background:white; padding:1.5rem; border-radius:1rem; border:1px solid var(--border-color); box-shadow:var(--shadow-sm); position:relative; overflow:hidden;">
+                        <span style="position:absolute; top:0; left:0; height:4px; width:100%; background:#0ea5e9;"></span>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <h4 style="color:#0ea5e9; font-size:1.1rem;">${p.name}</h4>
+                                <div style="font-size:0.7rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; margin-top:0.25rem;">Developer: ${p.developer}</div>
+                            </div>
+                            <div style="background:#f0f9ff; color:#0ea5e9; padding:0.25rem 0.6rem; border-radius:0.5rem; font-weight:800; font-size:0.8rem;">
+                                ${p.capacity} MW
+                            </div>
+                        </div>
+                        <div style="margin-top:1.5rem; display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                            <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #f1f5f9;">
+                                <div style="font-size:0.6rem; color:var(--text-muted); font-weight:600;">GEA RATE</div>
+                                <div style="font-size:0.9rem; font-weight:800; color:var(--text-dark);">₱${p.rate.toFixed(4)}</div>
+                            </div>
+                            <div style="background:#f8fafc; padding:0.75rem; border-radius:0.5rem; border:1px solid #f1f5f9;">
+                                <div style="font-size:0.6rem; color:var(--text-muted); font-weight:600;">GEA LOT</div>
+                                <div style="font-size:0.9rem; font-weight:800; color:var(--text-dark);">${p.lot}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            initImpChart();
+        }
+
+        function initGeoChart() {
+            const ctx = document.getElementById('geoChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mid 3', 'Tanawon', 'Bago'],
+                    datasets: [{
+                        label: 'GEA3 Bid Rate (₱/kWh)',
+                        data: [5.0512, 4.8821, 5.2210],
+                        backgroundColor: '#8b5cf6'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function initImpChart() {
+            const ctx = document.getElementById('impoundChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Mar', 'Jun', 'Sep', 'Dec'],
+                    datasets: [{
+                        label: 'Typical Gened Inflow (m3/s)',
+                        data: [40, 30, 120, 200, 80],
+                        borderColor: '#0ea5e9',
+                        fill: false
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const revCtx = document.getElementById('impRevenueChart').getContext('2d');
+            if (impRevenueChart) impRevenueChart.destroy();
+            impRevenueChart = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: 96 }, (_, i) => {
+                        let h = Math.floor(i / 4);
+                        let m = (i % 4) * 15;
+                        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                    }),
+                    datasets: [
+                        {
+                            label: 'WESM Price (₱/kWh)',
+                            data: [],
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            yAxisID: 'y',
+                            tension: 0.3, pointRadius: 0, fill: true
+                        },
+                        {
+                            label: 'Accrued Revenue (₱)',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            yAxisID: 'y1',
+                            tension: 0.3, pointRadius: 0, fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 12, font: { size: 8 } } },
+                        y: { title: { display: true, text: 'Price (₱/kWh)', font: { size: 9 } }, position: 'left', ticks: { font: { size: 8 } } },
+                        y1: { title: { display: true, text: 'Revenue (₱)', font: { size: 9 } }, position: 'right', grid: { display: false }, ticks: { font: { size: 8 } } }
+                    }
+                }
+            });
+        }
+
+        // 15-Minute Cycle Simulators
+        function toggleGeoSim() {
+            isGeoSimulating = !isGeoSimulating;
+            const btn = document.getElementById('playBtnGeo');
+            if (isGeoSimulating) {
+                btn.innerText = "Stop Baseload Cycle";
+                geoSimInterval = setInterval(geoStep, 100);
+            } else {
+                btn.innerText = "Start Baseload Cycle";
+                clearInterval(geoSimInterval);
+            }
+        }
+
+        function geoStep() {
+            const todFactor = Math.sin((geoCurrentInterval / 96) * Math.PI * 2 - Math.PI / 2) * 0.5 + 0.5; // Peak at noon
+            const ambientTemp = 28 + todFactor * 10; // 28C to 38C
+            const ambDerate = Math.max(0, (ambientTemp - 30) * 0.005); // 0.5% loss per degree above 30C
+
+            const price = (5 + Math.random() * 4) * marketPriceScalar;
+            const cap = geoPenetration * geoDerateLimit * (1 - ambDerate);
+            const temp = 305 + Math.random() * 25;
+            const efficiency = 0.985 - ((temp - 305) / 1200);
+
+            geoCumulativeRev += (cap * 1000 * price * (15 / 60)) * efficiency;
+            geoCurrentInterval = (geoCurrentInterval + 1) % 96;
+
+            const whp = 180 + Math.random() * 40;
+            const brine = 1500 + Math.random() * 300;
+            const ncg = 0.5 + Math.random() * 0.8;
+            const ent = 2750 + Math.random() * 100;
+
+            document.getElementById('geoRev').innerText = `₱${geoCumulativeRev.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('geoTemp').innerText = `${temp.toFixed(1)}°C`;
+            document.getElementById('geoEff').innerText = `${(efficiency * 100).toFixed(1)}%`;
+            document.getElementById('geoStatus').innerText = geoDerateLimit < 0.95 ? "PARTIAL DERATE" : "OPTIMAL BASELOAD";
+            document.getElementById('geoStatus').style.color = geoDerateLimit < 0.95 ? "var(--warning)" : "#10b981";
+
+            if (document.getElementById('geoWhp')) {
+                document.getElementById('geoWhp').innerText = `${whp.toFixed(0)} psi`;
+                document.getElementById('geoBrine').innerText = `${brine.toFixed(0)} m³/h`;
+                document.getElementById('geoNcg').innerText = `${ncg.toFixed(2)}%`;
+                document.getElementById('geoEnt').innerText = `${ent.toFixed(0)} kJ/kg`;
+
+                document.getElementById('geoAmbDerate').innerText = `${(ambDerate * 100).toFixed(1)}%`;
+                document.getElementById('geoFlashEff').innerText = `${(88 + Math.random() * 4).toFixed(1)}%`;
+                document.getElementById('geoNcgLoad').innerText = `${(cap * 0.04).toFixed(2)} MW`;
+                document.getElementById('geoMakeupWells').innerText = `${Math.floor(geoCurrentInterval / 960)} Units`; // Simulated
+            }
+        }
+
+        function toggleImpSim() {
+            isImpSimulating = !isImpSimulating;
+            const btn = document.getElementById('playBtnImp');
+            if (isImpSimulating) {
+                btn.innerText = "Stop Hydro Cycle";
+                impSimInterval = setInterval(impStep, 100);
+            } else {
+                btn.innerText = "Start Hydro Cycle";
+                clearInterval(impSimInterval);
+            }
+        }
+
+        function resetImpSim() {
+            isImpSimulating = false;
+            clearInterval(impSimInterval);
+            document.getElementById('playBtnImp').innerText = "Start Hydro Cycle";
+            impCumulativeRev = 0;
+            impCurrentInterval = 0;
+            document.getElementById('impRev').innerText = "₱0";
+            if (impRevenueChart) {
+                impRevenueChart.data.datasets[0].data = [];
+                impRevenueChart.data.datasets[1].data = [];
+                impRevenueChart.update();
+            }
+        }
+
+        function impStep() {
+            if (impCurrentInterval >= 96) {
+                toggleImpSim();
+                return;
+            }
+            const price = (4 + Math.random() * 7) * marketPriceScalar;
+            const cap = hydPenetration;
+
+            // Cascading Logic: Gened 2 inflow depends on Gened 1 discharge delay
+            const gened1Discharge = (75 + Math.random() * 30) * hydReservoirLevel;
+            gened1DischargeHistory.push(gened1Discharge);
+            if (gened1DischargeHistory.length > 32) gened1DischargeHistory.shift();
+
+            const delayedInflow = gened1DischargeHistory[0]; // 8-interval lag (2 hours)
+            const inflow = (delayedInflow + Math.random() * 20) * hydReservoirLevel;
+
+            const spillage = Math.max(0, inflow - 110);
+            const head = 112 + (hydReservoirLevel * 15);
+
+            const isMidMerit = price > 7.5;
+            const dispatchMW = isMidMerit ? cap : cap * 0.12;
+
+            impCumulativeRev += (dispatchMW * 1000 * price * (15 / 60));
+
+            const gate = isMidMerit ? (85 + Math.random() * 10) : (15 + Math.random() * 10);
+            const tail = 10.2 + (dispatchMW / cap) * 2.5;
+            const velocity = (dispatchMW / cap) * 6.5;
+            const yieldVal = 2.4 + (head - 112) * 0.02;
+
+            document.getElementById('impRev').innerText = `₱${impCumulativeRev.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('impHead').innerText = `${head.toFixed(1)}m`;
+            document.getElementById('impInflow').innerText = `${inflow.toFixed(0)} m³/s`;
+            document.getElementById('impSpill').innerText = `${spillage.toFixed(1)} m³/s`;
+            document.getElementById('impMode').innerText = isMidMerit ? "PEAK DISCHARGE" : "RESERVOIR FILL";
+            document.getElementById('impMode').style.color = isMidMerit ? "#0ea5e9" : "#059669";
+
+            if (impRevenueChart) {
+                if (impCurrentInterval === 0) {
+                    impRevenueChart.data.datasets[0].data = [];
+                    impRevenueChart.data.datasets[1].data = [];
+                }
+                impRevenueChart.data.datasets[0].data.push(price);
+                impRevenueChart.data.datasets[1].data.push(impCumulativeRev);
+                impRevenueChart.update('none');
+                document.getElementById('impSimTime').innerText = impRevenueChart.data.labels[impCurrentInterval] + " H";
+            }
+
+            impCurrentInterval++;
+
+            if (document.getElementById('impGate')) {
+                document.getElementById('impGate').innerText = `${gate.toFixed(1)}%`;
+                document.getElementById('impTail').innerText = `${tail.toFixed(1)}m`;
+                document.getElementById('impYield').innerText = `${yieldVal.toFixed(2)} kWh/m³`;
+                document.getElementById('impVel').innerText = `${velocity.toFixed(1)} m/s`;
+
+                document.getElementById('impCascadingLag').innerText = `120 min`;
+                document.getElementById('impSiltation').innerText = `${(0.4).toFixed(1)}%`;
+                document.getElementById('impHydRecov').innerText = `${(92 + Math.random() * 3).toFixed(1)}%`;
+                document.getElementById('impSpillLoss').innerText = `${(spillage * 0.15).toFixed(2)} MWh`;
+            }
+        }
+
+        function generateAuditReport() {
+            const rte = document.getElementById('auditRTE').innerText;
+            const peaker = document.getElementById('auditPeaker').innerText;
+            const voll = document.getElementById('auditVOLL').innerText;
+            const summary = `ERC REGULATORY AUDIT SUMMARY\n\n` +
+                `1. Physical RTE: ${rte}\n` +
+                `2. Avoided Peaker: ${peaker}\n` +
+                `3. VOLL Resilience: ${voll}\n\n` +
+                `Status: All PSH settlement parameters within DOE DC2024-01-0003 guidelines.`;
+            alert(summary);
+        }
+
+        function updateDisplacementHeatmap() {
+            const container = document.getElementById('displacementHeatmap');
+            if (!container) return;
+            container.innerHTML = '';
+
+            for (let h = 0; h < 24; h++) {
+                const cell = document.createElement('div');
+                const isPeak = (h >= 10 && h <= 15) || (h >= 18 && h <= 21);
+                const opacity = 0.3 + Math.random() * 0.7;
+                // Peak displacement is Reddish-Pink, Off-peak is Deep Blue
+                const color = isPeak ? `rgba(244, 63, 94, ${opacity})` : `rgba(37, 99, 235, ${opacity})`;
+
+                cell.style.background = color;
+                cell.style.borderRadius = '2px';
+                cell.style.cursor = 'help';
+                cell.title = `Hour ${h}:00 - Fossil Displacement: ${(opacity * 100).toFixed(0)}%`;
+                container.appendChild(cell);
+            }
+        }
+
+        // Initialize Advanced Analytics
+        updateDisplacementHeatmap();
+        setInterval(updateDisplacementHeatmap, 5000);
+
+        // Initialize Initial Content
+        initRainChartGened();
+
         // Finalized Initialization
         populateTable();
-        populateRoadmap();
+        populateRoadmap('PSH');
+        populateRoadmap('GEO');
+        populateRoadmap('IMP');
         updatePlant();
         updateSensitivityChart();
     </script>
