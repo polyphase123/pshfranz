@@ -991,44 +991,130 @@
             <div class="card-header">
                 <div class="card-title">🔍 ERC Advanced Regulatory Compliance Metrics</div>
             </div>
-            <div class="audit-grid">
+            <div class="audit-grid" style="grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                <!-- SECTION: PSH CORE AUDITS -->
+                <div
+                    style="grid-column: span 4; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h5
+                        style="font-size: 0.75rem; text-transform: uppercase; color: #2563eb; letter-spacing: 0.05em; font-weight: 800;">
+                        🛰️ PSH Settlement & Operational Core</h5>
+                    <span
+                        style="font-size: 0.6rem; background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-weight: 700;">DC2024-01-0003
+                        Compliance</span>
+                </div>
                 <div class="audit-card">
                     <h4>01. RTE Compliance (75% Rule)</h4>
-                    <div class="val" id="auditRTE">0%</div>
-                    <div id="rteStatus" style="font-size: 0.7rem; margin-top: 0.25rem;">Auditing Efficiency...
-                    </div>
+                    <div class="val" id="auditRTE" style="color: #2563eb;">0.0%</div>
+                    <div id="rteStatus" style="font-size: 0.65rem; margin-top: 0.25rem; font-weight: 600;">Auditing
+                        Efficiency...</div>
                 </div>
                 <div class="audit-card">
-                    <h4>02. Avoided Peaker Cost</h4>
-                    <div class="val" id="auditPeaker">₱0.00</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Displacing ₱15/kWh Peakers</div>
+                    <h4>02. Ramp Rate Compliance</h4>
+                    <div class="val" id="auditPumpingRisk">NORMAL</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Regulating Reserve LFC</div>
                 </div>
                 <div class="audit-card">
-                    <h4>03. VOLL Resilience Value</h4>
-                    <div class="val" id="auditVOLL">₱0.00</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">National Value of Lost Load Buffer
-                    </div>
+                    <h4>03. AS Revenue Cap Audit</h4>
+                    <div class="val" id="auditAS">PASS</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">MAR vs Energy Opportunity</div>
                 </div>
                 <div class="audit-card">
-                    <h4>04. Carbon Credits (Green Score)</h4>
-                    <div class="val" id="auditCO2">0.00 tCO2</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">CO2 Emission Displacement</div>
+                    <h4>04. Cycle Endurance</h4>
+                    <div class="val" id="auditDischarge">STABLE</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Pump/Gen Mechanical Stress</div>
+                </div>
+
+                <!-- SECTION: GEOTHERMAL BASELOAD -->
+                <div
+                    style="grid-column: span 4; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h5
+                        style="font-size: 0.75rem; text-transform: uppercase; color: #8b5cf6; letter-spacing: 0.05em; font-weight: 800;">
+                        ♨️ Geothermal Baseload Integrity Analytics</h5>
+                    <span
+                        style="font-size: 0.6rem; background: #f3e8ff; color: #6b21a8; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Supercritical
+                        Flash Audit</span>
                 </div>
                 <div class="audit-card">
-                    <h4>05. Pumping Risk Factor</h4>
-                    <div class="val" id="auditPumpingRisk">Normal</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Vulnerability to WESM price spikes
-                    </div>
+                    <h4>05. Thermal Efficiency (Net)</h4>
+                    <div class="val" id="auditGeoEff" style="color: #8b5cf6;">0.0%</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Brayton/Rankine Recovery</div>
                 </div>
                 <div class="audit-card">
-                    <h4>06. AS Revenue Cap Audit</h4>
-                    <div class="val" id="auditAS">Pass</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Ancillary vs Energy Market Cap</div>
+                    <h4>06. Reliability Factor (EAF)</h4>
+                    <div class="val" id="auditGeoReliability">0%</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Target Baseload Availability</div>
                 </div>
                 <div class="audit-card">
-                    <h4>07. Multi-Project Synergy</h4>
-                    <div class="val" id="auditSynergy">1.42</div>
-                    <div style="font-size: 0.7rem; margin-top: 0.25rem;">Portfolio Volatility Reduction</div>
+                    <h4>07. Wellhead Pressure Stability</h4>
+                    <div class="val" id="auditGeoWhp">OPTIMAL</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Sub-surface Reservoir Health</div>
+                </div>
+                <div class="audit-card">
+                    <h4>08. Reinjection Ratio</h4>
+                    <div class="val" id="auditGeoNcg">100%</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Environment Compliance Audit</div>
+                </div>
+
+                <!-- SECTION: IMPOUNDING HYDRO -->
+                <div
+                    style="grid-column: span 4; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h5
+                        style="font-size: 0.75rem; text-transform: uppercase; color: #0ea5e9; letter-spacing: 0.05em; font-weight: 800;">
+                        💧 Impounding Hydro Optimization Protocol</h5>
+                    <span
+                        style="font-size: 0.6rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Gened
+                        Cascading Loop</span>
+                </div>
+                <div class="audit-card">
+                    <h4>09. Hydraulic Head Efficiency</h4>
+                    <div class="val" id="auditImpHead" style="color: #0ea5e9;">0.0%</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Dynamic Head vs Static Inflow</div>
+                </div>
+                <div class="audit-card">
+                    <h4>10. Inflow Utilization Rate</h4>
+                    <div class="val" id="auditImpInflow">0.0%</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Penstock Recovery Ratio</div>
+                </div>
+                <div class="audit-card">
+                    <h4>11. Secondary Spillage Audit</h4>
+                    <div class="val" id="auditImpCascade">PASS</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Downstream Catchment Stability</div>
+                </div>
+                <div class="audit-card">
+                    <h4>12. Power Yield Coefficient</h4>
+                    <div class="val" id="auditImpYield">2.41</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">MW Efficiency per m³/s</div>
+                </div>
+
+                <!-- SECTION: PORTFOLIO AGGREGATES -->
+                <div
+                    style="grid-column: span 4; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h5
+                        style="font-size: 0.75rem; text-transform: uppercase; color: #1e293b; letter-spacing: 0.05em; font-weight: 800;">
+                        🏛️ Cross-Discipline Portfolio Aggregates</h5>
+                    <span
+                        style="font-size: 0.6rem; background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 4px; font-weight: 700;">Unified
+                        Grid Audit</span>
+                </div>
+                <div class="audit-card">
+                    <h4>13. Avoided Peaker (Agg)</h4>
+                    <div class="val" id="auditPeaker" style="color: #059669;">₱0</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Fuel Displacement Savings</div>
+                </div>
+                <div class="audit-card">
+                    <h4>14. Carbon Credits (CERs)</h4>
+                    <div class="val" id="auditCO2">0.0 tCO2</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Portfolio Green Compliance</div>
+                </div>
+                <div class="audit-card">
+                    <h4>15. VOLL Resilience Value</h4>
+                    <div class="val" id="auditVOLL">₱0</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Energy Not Served (ENS) Buffer</div>
+                </div>
+                <div class="audit-card">
+                    <h4>16. System Synergy Alpha</h4>
+                    <div class="val" id="auditSynergy">1.00</div>
+                    <div style="font-size: 0.65rem; margin-top: 0.25rem;">Diversity Volatility Hedge</div>
                 </div>
             </div>
         </div>
@@ -1855,7 +1941,7 @@
                             style="background: rgba(14, 165, 233, 0.05); padding: 0.75rem; border-radius: 0.5rem; border: 1px dashed #0ea5e9;">
                             <div style="font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted);">
                                 Spillway Loss</div>
-                            <div id="impSpillLoss" style="font-size: 1rem; font-weight: 800; color: #f43f5e;">0.00 MWh
+                            <div id="impSpillLoss" style="font-size: 1.1rem; font-weight: 800; color: #f43f5e;">0.00 MWh
                             </div>
                         </div>
                     </div>
@@ -2035,6 +2121,11 @@
         let impCumulativeRev = 0;
         let impCurrentInterval = 0;
         let impRevenueChart = null;
+
+        let geoCumulativeMWh = 0;
+        let impCumulativeMWh = 0;
+        let impCumulativeInflow = 0;
+        let impCumulativeSpill = 0;
 
 
         // Initialize Chart
@@ -2266,6 +2357,62 @@
             currentInterval++;
             updateUI(price, dispatch);
             pshChart.update('none');
+            updateAuditDashboard();
+        }
+
+        function updateAuditDashboard() {
+            // SECTION: PSH CORE
+            const physicalRte = totalMWhPump > 0 ? (totalMWhGen / totalMWhPump) : 0;
+            document.getElementById('auditRTE').innerText = `${(physicalRte * 100).toFixed(1)}%`;
+            const rteStatus = document.getElementById('rteStatus');
+            if (physicalRte >= 0.75) { rteStatus.innerText = "✅ Compliance Met (Physical)"; rteStatus.style.color = "var(--success)"; }
+            else { rteStatus.innerText = "⚠️ Under Efficiency Benchmark"; rteStatus.style.color = "var(--danger)"; }
+
+            const avgPrice = HISTORICAL_PRICES[currentYear] || 5;
+            const rampRateStatus = (Math.abs(pshChart.data.datasets[1].data[currentInterval - 1] - pshChart.data.datasets[1].data[currentInterval - 2] || 0) > (capacityMW * 0.5)) ? "HIGH" : "NORMAL";
+            document.getElementById('auditPumpingRisk').innerText = rampRateStatus;
+            document.getElementById('auditPumpingRisk').style.color = (rampRateStatus === "NORMAL") ? "var(--success)" : "var(--warning)";
+
+            const asRevenueActual = cumulativeAS;
+            const energyOppCost = (capacityMW * 1000 * (avgPrice * 0.5) * currentInterval * (5 / 60));
+            document.getElementById('auditAS').innerText = (asRevenueActual > energyOppCost) ? "PASS" : "AUDIT REQUIRED";
+            document.getElementById('auditAS').style.color = (asRevenueActual > energyOppCost) ? "var(--success)" : "var(--warning)";
+
+            const cycleEndurance = (totalMWhGen + totalMWhPump) > (capacityMW * 24 * 0.5) ? "STRESSED" : "STABLE";
+            document.getElementById('auditDischarge').innerText = cycleEndurance;
+            document.getElementById('auditDischarge').style.color = (cycleEndurance === "STABLE") ? "var(--success)" : "var(--warning)";
+
+            // SECTION: GEOTHERMAL
+            const geoEff = (0.985 - ((1 - geoDerateLimit) * 0.1));
+            document.getElementById('auditGeoEff').innerText = `${(geoEff * 100).toFixed(1)}%`;
+            document.getElementById('auditGeoReliability').innerText = `${(geoDerateLimit * 100).toFixed(0)}%`;
+            document.getElementById('auditGeoWhp').innerText = geoDerateLimit > 0.9 ? "OPTIMAL" : "STRESSED";
+            document.getElementById('auditGeoWhp').style.color = geoDerateLimit > 0.9 ? "var(--success)" : "var(--warning)";
+            document.getElementById('auditGeoNcg').innerText = `100%`; // Placeholder for reinjection
+
+            // SECTION: IMPOUNDING
+            const head = 112 + (hydReservoirLevel * 15);
+            const headEff = (head / 127) * 100;
+            document.getElementById('auditImpHead').innerText = `${headEff.toFixed(1)}%`;
+            const util = impCumulativeMWh > 0 ? (impCumulativeMWh / (impCumulativeMWh + impCumulativeSpill)) : 0;
+            document.getElementById('auditImpInflow').innerText = `${(Math.max(0, util) * 100).toFixed(1)}%`;
+            document.getElementById('auditImpCascade').innerText = impCumulativeSpill > 0 ? "WARNING" : "PASS";
+            document.getElementById('auditImpCascade').style.color = impCumulativeSpill > 0 ? "var(--warning)" : "var(--success)";
+            document.getElementById('auditImpYield').innerText = (2.41 + (head - 112) * 0.02).toFixed(2);
+
+            // SECTION: AGGREGATES
+            const totalGenMWh = totalMWhGen + geoCumulativeMWh + impCumulativeMWh;
+            const avoidedPeaker = totalGenMWh * 1000 * (15 - avgPrice);
+            document.getElementById('auditPeaker').innerText = `₱${Math.max(0, avoidedPeaker).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            const co2 = totalGenMWh * 0.7;
+            document.getElementById('auditCO2').innerText = `${co2.toFixed(1)} tCO2`;
+
+            const resilienceValue = (waterLevel / 100 * capacityMW * 4 + hydReservoirLevel * 150) * 20000;
+            document.getElementById('auditVOLL').innerText = `₱${resilienceValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            const synergy = 1.0 + (totalMWhGen > 0 ? 0.2 : 0) + (geoCumulativeMWh > 0 ? 0.35 : 0) + (impCumulativeMWh > 0 ? 0.25 : 0);
+            document.getElementById('auditSynergy').innerText = synergy.toFixed(2);
         }
 
         function updateUI(price, dispatch) {
@@ -2300,11 +2447,6 @@
             if (ri < 0.04) { badge.innerText = "GOOD"; badge.style.background = "#dcfce7"; badge.style.color = "#166534"; }
             else { badge.innerText = "MODERATE"; badge.style.background = "#fef3c7"; badge.style.color = "#92400e"; }
 
-            const physicalRte = totalMWhPump > 0 ? (totalMWhGen / totalMWhPump) : 0;
-            document.getElementById('auditRTE').innerText = `${(physicalRte * 100).toFixed(1)}%`;
-            const rteStatus = document.getElementById('rteStatus');
-            if (physicalRte >= 0.75) { rteStatus.innerText = "✅ Compliance Met (Physical)"; rteStatus.style.color = "var(--success)"; }
-            else { rteStatus.innerText = "⚠️ Under Efficiency Benchmark"; rteStatus.style.color = "var(--danger)"; }
 
             const avoidedPeaker = totalMWhGen * 1000 * (15 - (HISTORICAL_PRICES[currentYear] || 5));
             document.getElementById('auditPeaker').innerText = `₱${Math.max(0, avoidedPeaker).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
@@ -2315,15 +2457,6 @@
             const co2 = (cumulativeEnergy / 1000) * 0.7; // 0.7 tCO2 per MWh
             document.getElementById('auditCO2').innerText = `${co2.toFixed(2)} tCO2`;
 
-            // Advanced Audit Logic
-            const avgPrice = HISTORICAL_PRICES[currentYear] || 5;
-            document.getElementById('auditPumpingRisk').innerText = (price > avgPrice * 1.5) ? "HIGH" : "NORMAL";
-            document.getElementById('auditPumpingRisk').style.color = (price > avgPrice * 1.5) ? "var(--danger)" : "var(--success)";
-
-            const asRevenueActual = cumulativeAS;
-            const energyOppCost = (capacityMW * 1000 * (avgPrice * 0.5) * currentInterval * (5 / 60)); // Placeholder opp cost
-            document.getElementById('auditAS').innerText = (asRevenueActual > energyOppCost) ? "Pass" : "Audit Required";
-            document.getElementById('auditAS').style.color = (asRevenueActual > energyOppCost) ? "var(--success)" : "var(--warning)";
         }
 
         function finalizeVerdict() {
@@ -3163,6 +3296,7 @@
             const efficiency = 0.985 - ((temp - 305) / 1200);
 
             geoCumulativeRev += (cap * 1000 * price * (15 / 60)) * efficiency;
+            geoCumulativeMWh += (cap * 1000 * (15 / 60)) / 1000;
             geoCurrentInterval = (geoCurrentInterval + 1) % 96;
 
             const whp = 180 + Math.random() * 40;
@@ -3187,6 +3321,7 @@
                 document.getElementById('geoNcgLoad').innerText = `${(cap * 0.04).toFixed(2)} MW`;
                 document.getElementById('geoMakeupWells').innerText = `${Math.floor(geoCurrentInterval / 960)} Units`; // Simulated
             }
+            updateAuditDashboard();
         }
 
         function toggleImpSim() {
@@ -3238,6 +3373,8 @@
             const dispatchMW = isMidMerit ? cap : cap * 0.12;
 
             impCumulativeRev += (dispatchMW * 1000 * price * (15 / 60));
+            impCumulativeMWh += (dispatchMW * (15 / 60));
+            impCumulativeSpill += (spillage * (15 / 60));
 
             const gate = isMidMerit ? (85 + Math.random() * 10) : (15 + Math.random() * 10);
             const tail = 10.2 + (dispatchMW / cap) * 2.5;
@@ -3248,6 +3385,7 @@
             document.getElementById('impHead').innerText = `${head.toFixed(1)}m`;
             document.getElementById('impInflow').innerText = `${inflow.toFixed(0)} m³/s`;
             document.getElementById('impSpill').innerText = `${spillage.toFixed(1)} m³/s`;
+            updateAuditDashboard();
             document.getElementById('impMode').innerText = isMidMerit ? "PEAK DISCHARGE" : "RESERVOIR FILL";
             document.getElementById('impMode').style.color = isMidMerit ? "#0ea5e9" : "#059669";
 
