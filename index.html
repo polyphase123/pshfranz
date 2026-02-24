@@ -580,6 +580,10 @@
                 <div class="label">Non-FIT GEAP Price</div>
                 <div class="value" id="selPrice">-</div>
             </div>
+            <div class="selection-item">
+                <div class="label">Engineering Configuration</div>
+                <div class="value" id="selConfig">-</div>
+            </div>
         </div>
 
         <div class="tabs">
@@ -941,6 +945,38 @@
                         <div style="margin-bottom: 1.5rem;">
                             <label
                                 style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>PSH Capacity Derating (%)</span>
+                                <span id="valDerate" style="color: var(--danger);">100%</span>
+                            </label>
+                            <input type="range" min="0" max="100" step="1" value="100" id="slideDerate"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateStressParam('derate', this.value)">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                <span>Forced Outage (0%)</span>
+                                <span>Full Online (100%)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>WESM Price Scalar (Multiplier)</span>
+                                <span id="valScalar" style="color: var(--primary);">1.0x</span>
+                            </label>
+                            <input type="range" min="0.5" max="3.0" step="0.1" value="1.0" id="slideScalar"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateStressParam('scalar', this.value)">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                <span>Economy (0.5x)</span>
+                                <span>Price Shock (3.0x)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
                                 <span>Regulatory Stress Scenario</span>
                                 <span class="feature-badge" id="scenarioBadge"
                                     style="background:#e0f2fe; color:#0369a1;">Baseline</span>
@@ -1021,13 +1057,13 @@
         <script>
             // GEA3 Plant Data from Official Screenshots
             const PLANTS = {
-                kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028 },
-                wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029 },
-                pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030 },
-                sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031 },
-                sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032 },
-                maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033 },
-                aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034 }
+                kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, units: 2, unitCap: 250, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028 },
+                wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, units: 3, unitCap: 200, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029 },
+                pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, units: 4, unitCap: 350, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030 },
+                sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, units: 2, unitCap: 400, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031 },
+                sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, units: 2, unitCap: 400, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032 },
+                maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, units: 4, unitCap: 500, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033 },
+                aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, units: 2, unitCap: 125, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034 }
             };
 
             const HISTORICAL_PRICES = {
@@ -1068,6 +1104,8 @@
 
             let mustRunActive = false;
             let zonalLMPActive = false;
+            let pshDerateFactor = 1.0;
+            let marketPriceScalar = 1.0;
 
             // Initialize Chart
             const ctx = document.getElementById('pshChart').getContext('2d');
@@ -1171,7 +1209,7 @@
                     body.innerHTML += `<tr>
                     <td><span class="feature-badge" style="background:#f1f5f9; color:#475569;">${p.lot}</span></td>
                     <td>${p.name}</td>
-                    <td>${p.capacity} MW</td>
+                    <td>${p.capacity} MW<br><small style="color: var(--text-muted)">${p.units}x${p.unitCap}MW</small></td>
                     <td>₱${p.rate.toFixed(4)}</td>
                     <td style="text-align: right; font-weight: 600; color: var(--primary);">₱${ri.toFixed(4)}</td>
                 </tr>`;
@@ -1190,6 +1228,7 @@
                 document.getElementById('selFacility').innerText = p.name;
                 document.getElementById('selLot').innerText = p.lot;
                 document.getElementById('selPrice').innerText = `₱${p.rate.toFixed(4)}/kW/h`;
+                document.getElementById('selConfig').innerText = `${p.units} Units x ${p.unitCap} MW`;
 
                 pshChart.options.scales.y1.min = -capacityMW;
                 pshChart.options.scales.y1.max = capacityMW;
@@ -1197,7 +1236,7 @@
             }
 
             function generateMarketData() {
-                const base = HISTORICAL_PRICES[currentYear];
+                const base = HISTORICAL_PRICES[currentYear] * marketPriceScalar;
                 const s = SEASONS[currentSeason];
                 marketData = [];
                 for (let i = 0; i < INTERVALS; i++) {
@@ -1262,16 +1301,16 @@
                 const avg = HISTORICAL_PRICES[currentYear];
 
                 if (mustRunActive) {
-                    dispatch = capacityMW;
-                    waterLevel -= 0.5;
+                    dispatch = capacityMW * pshDerateFactor;
+                    waterLevel -= 0.5 * pshDerateFactor;
                     logMsg = `[DC Sec 6.3] GRID ALERT: Forced N-1 Dispatch. Prioritizing Stability over Market.`;
                 } else if (price > (avg * 1.3) && waterLevel > 10) {
-                    dispatch = capacityMW;
-                    waterLevel -= 0.5;
+                    dispatch = capacityMW * pshDerateFactor;
+                    waterLevel -= 0.5 * pshDerateFactor;
                     logMsg = `[DC Sec 4.2] Generation Triggered: Price (₱${price.toFixed(2)}) > 1.3x Benchmark.`;
                 } else if (price < (avg * 0.8) && waterLevel < 95) {
-                    dispatch = -capacityMW;
-                    waterLevel += 0.5 * ROUNDTRIP_EFF;
+                    dispatch = -capacityMW * pshDerateFactor;
+                    waterLevel += 0.5 * ROUNDTRIP_EFF * pshDerateFactor;
                     logMsg = `[DC Sec 4.2] Pumping Triggered: Charging at Low-Cost WESM (₱${price.toFixed(2)}).`;
                 } else {
                     logMsg = `[DC Sec 3.1] Standby: Accruing GEA Capacity Availability Payment.`;
@@ -1440,6 +1479,12 @@
                         document.getElementById('slideVol').value = 1.0;
                         document.getElementById('valVol').innerText = "1.0";
                     }
+                } else if (type === 'derate') {
+                    pshDerateFactor = parseFloat(val) / 100;
+                    document.getElementById('valDerate').innerText = val + "%";
+                } else if (type === 'scalar') {
+                    marketPriceScalar = parseFloat(val);
+                    document.getElementById('valScalar').innerText = marketPriceScalar.toFixed(1) + "x";
                 }
                 resetSim();
                 updateSensitivityChart();
@@ -1474,8 +1519,9 @@
                 const ciLower = [];
 
                 const p = PLANTS[currentPlant];
+                const effectiveCap = p.capacity * pshDerateFactor;
                 const hoursPerMonth = 30 * 24;
-                const avgPrice = HISTORICAL_PRICES[currentYear] || 5.0;
+                const avgPrice = (HISTORICAL_PRICES[currentYear] || 5.0) * marketPriceScalar;
                 const volatility = SEASONS.default.volatility;
 
                 // Predictive Math if simulation hasn't run
@@ -1487,9 +1533,9 @@
                     const injPrice = avgPrice * (zonalLMPActive ? 1.5 : 1.3);
                     const pumpPrice = avgPrice * 0.7 * (1 / volatility);
 
-                    const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
-                    const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6) * (mustRunActive ? 1.2 : 1.0);
-                    const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+                    const monthlyEnergy = effectiveCap * 1000 * injPrice * (30 * 6);
+                    const monthlyPumping = effectiveCap * 1000 * pumpPrice * (30 * 6) * (mustRunActive ? 1.2 : 1.0);
+                    const monthlyAS = effectiveCap * 3.5 * hoursPerMonth;
 
                     const net = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
                     const ri = Math.max(0, net) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
