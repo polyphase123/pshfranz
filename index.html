@@ -3004,16 +3004,27 @@
         // Conventional Asset Displacement Logic
         const CONVENTIONAL_PLANTS = [
             { name: "Malaya Thermal Units 1 & 2", type: "Oil/Bunker", region: "Luzon", role: "Peaker / MRU", cap: 650, rate: 18.50 },
+            { name: "Ilijan Natural Gas Plant", type: "Natural Gas", region: "Luzon", role: "Mid-Merit / Baseload", cap: 1200, rate: 8.50 },
             { name: "Sual Coal Unit 1 (Aging)", type: "Coal", region: "Luzon", role: "Baseload", cap: 600, rate: 5.80 },
-            { name: "Pagbilao Unit 1 (Aging)", type: "Coal", region: "Luzon", role: "Baseload", cap: 350, rate: 6.20 },
+            { name: "Team Energy Sual Unit 2", type: "Coal", region: "Luzon", role: "Baseload", cap: 600, rate: 5.85 },
+            { name: "GNPower Mariveles", type: "Coal", region: "Luzon", role: "Baseload", cap: 600, rate: 6.10 },
+            { name: "Pagbilao Unit 1 & 2", type: "Coal", region: "Luzon", role: "Baseload", cap: 700, rate: 6.20 },
+            { name: "Pagbilao Unit 3", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 420, rate: 6.40 },
+            { name: "Quezon Power (Old)", type: "Coal", region: "Luzon", role: "Baseload", cap: 460, rate: 6.25 },
+            { name: "SMC Limay Coal", type: "Coal", region: "Luzon", role: "Baseload", cap: 600, rate: 6.00 },
+            { name: "Masinloc Unit 1 & 2 (Old)", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 600, rate: 6.45 },
+            { name: "Masinloc Unit 3", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 335, rate: 6.30 },
+            { name: "Calaca Unit 1 & 2 (Aging)", type: "Coal", region: "Luzon", role: "Baseload", cap: 600, rate: 6.15 },
+            { name: "Sta. Rita Gas Plant", type: "Natural Gas", region: "Luzon", role: "Mid-Merit", cap: 500, rate: 8.75 },
+            { name: "San Lorenzo Gas Plant", type: "Natural Gas", region: "Luzon", role: "Mid-Merit", cap: 500, rate: 8.90 },
+            { name: "Therma South Mindanao", type: "Coal", region: "Mindanao", role: "Baseload", cap: 300, rate: 5.90 },
+            { name: "Cebu Energy (CEDC)", type: "Coal", region: "Visayas", role: "Baseload", cap: 246, rate: 6.35 },
             { name: "Naga Complex (Oil)", type: "Diesel", region: "Visayas", role: "Peaker / AS", cap: 100, rate: 22.40 },
             { name: "Limay Diesel Plant", type: "Bunker C", region: "Luzon", role: "Peak Load", cap: 110, rate: 19.80 },
-            { name: "Masinloc Unit 1 (Old)", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 300, rate: 6.45 },
-            { name: "Sta. Rita (Natural Gas)", type: "Gas", region: "Luzon", role: "Mid-Merit", cap: 250, rate: 8.75 },
-            { name: "San Lorenzo (Natural Gas)", type: "Gas", region: "Luzon", role: "Mid-Merit", cap: 250, rate: 8.90 },
-            { name: "Power Barge 101, 102", type: "Diesel", region: "Vis/Min", role: "Emergency / AS", cap: 64, rate: 25.10 },
             { name: "Bauang Diesel (1590)", type: "Diesel", region: "Luzon", role: "Peaking", cap: 215, rate: 17.60 },
-            { name: "Calaca Unit 1 (Old)", type: "Coal", region: "Luzon", role: "Baseload", cap: 300, rate: 6.15 }
+            { name: "Toledo Power (Old)", type: "Oil/Bunker", region: "Visayas", role: "Peaking", cap: 82, rate: 18.20 },
+            { name: "Power Barge 101-104", type: "Diesel", region: "Vis/Min", role: "Emergency / AS", cap: 128, rate: 25.10 },
+            { name: "Mobile Diesel Units (GenSets)", type: "Diesel", region: "National", role: "Emergency / AS", cap: 200, rate: 24.50 }
         ];
 
         function updateDisplacementTable() {
