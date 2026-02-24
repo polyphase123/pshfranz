@@ -2731,9 +2731,9 @@
             if (!body) return;
             body.innerHTML = '';
 
-            const avgPrice = HISTORICAL_PRICES[2025] || 4.80;
+            const avgPrice = 3.80; // Baseline market price for settlement delta calculation
             const pumpPrice = avgPrice * 0.8;
-            const injPrice = avgPrice * 1.3;
+            const injPrice = avgPrice * 1.5;
             const hoursPerMonth = 30 * 24;
 
             const years = [];
@@ -2794,11 +2794,6 @@
                     rowHtml += `<td style="color:#0ea5e9">₱${impRI.toFixed(4)}</td>`;
                     rowHtml += `<td style="text-align: right; font-weight: 800; color: var(--primary);">₱${totalPortfolioRI.toFixed(4)}</td>`;
                     body.innerHTML += `<tr>${rowHtml}</tr>`;
-                }
-
-                const allDone = Object.values(PLANTS).every(p => year >= p.startYear);
-                if (allDone) {
-                    year += 1;
                 }
             }
 
