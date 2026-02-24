@@ -1192,6 +1192,38 @@
                         <div style="margin-bottom: 1.5rem;">
                             <label
                                 style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>Global Project Delay (Months)</span>
+                                <span id="valDelay" style="color: var(--danger);">0 m</span>
+                            </label>
+                            <input type="range" min="0" max="60" step="1" value="0" id="slideDelay"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateStressParam('delay', this.value)">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                <span>On-Time</span>
+                                <span>5-Year Delay</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
+                                <span>GEA Rate Adjustment (%)</span>
+                                <span id="valRateAdj" style="color: var(--primary);">0%</span>
+                            </label>
+                            <input type="range" min="-20" max="50" step="1" value="0" id="slideRateAdj"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateStressParam('rateadj', this.value)">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                <span>Reduced (-20%)</span>
+                                <span>Escalated (+50%)</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 600; display: flex; justify-content: space-between;">
                                 <span>Regulatory Stress Scenario</span>
                                 <span class="feature-badge" id="scenarioBadge"
                                     style="background:#e0f2fe; color:#0369a1;">Baseline</span>
@@ -2062,6 +2094,8 @@
         let zonalLMPActive = false;
         let pshDerateFactor = 1.0;
         let marketPriceScalar = 1.0;
+        let globalProjectDelay = 0; // Months
+        let geaRateAdjustment = 1.0; // Multiplier
 
         // GEA3 Expansion Variables
         let geoPenetration = 500;
@@ -2593,6 +2627,12 @@
             } else if (type === 'scalar') {
                 marketPriceScalar = parseFloat(val);
                 document.getElementById('valScalar').innerText = marketPriceScalar.toFixed(1) + "x";
+            } else if (type === 'delay') {
+                globalProjectDelay = parseInt(val);
+                document.getElementById('valDelay').innerText = val + " m";
+            } else if (type === 'rateadj') {
+                geaRateAdjustment = 1 + (parseFloat(val) / 100);
+                document.getElementById('valRateAdj').innerText = (val > 0 ? "+" : "") + val + "%";
             }
             resetSim();
             updateSensitivityChart();
@@ -2754,27 +2794,35 @@
                 const siltationFactor = Math.pow(0.998, yearsPassed); // 0.2% loss per year
 
                 Object.values(PLANTS).forEach(p => {
-                    if (year >= p.startYear) {
+                    const effectiveStartYear = p.startYear + Math.floor(globalProjectDelay / 12);
+                    const delayedYearFraction = (globalProjectDelay % 12) / 12;
+
+                    if (year >= effectiveStartYear) {
+                        // Rough check for fractional delay impact in the COD year
+                        let availabilityFactor = 1.0;
+                        if (year === effectiveStartYear) availabilityFactor = 1 - delayedYearFraction;
+
+                        const effectiveRate = p.rate * geaRateAdjustment;
                         activeCount++;
 
                         if (p.type === 'PSH') {
-                            totalActiveCap += p.capacity;
-                            const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
-                            const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
-                            const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6);
-                            const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+                            totalActiveCap += p.capacity * availabilityFactor;
+                            const monthlyGEA = (p.capacity * availabilityFactor) * 1000 * effectiveRate * hoursPerMonth;
+                            const monthlyEnergy = (p.capacity * availabilityFactor) * 1000 * injPrice * (30 * 6);
+                            const monthlyPumping = (p.capacity * availabilityFactor) * 1000 * pumpPrice * (30 * 6);
+                            const monthlyAS = (p.capacity * availabilityFactor) * 3.5 * hoursPerMonth;
                             const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
                             pshRI += Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
                         } else if (p.type === 'GEO') {
-                            const actualCap = p.capacity * whpDecline;
+                            const actualCap = p.capacity * whpDecline * availabilityFactor;
                             totalActiveCap += actualCap;
-                            const monthlyGEA = actualCap * 1000 * p.rate * hoursPerMonth;
+                            const monthlyGEA = actualCap * 1000 * effectiveRate * hoursPerMonth;
                             const monthlyMkt = actualCap * 1000 * avgPrice * hoursPerMonth;
                             geoRI += Math.max(0, monthlyGEA - monthlyMkt) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
                         } else if (p.type === 'IMP') {
-                            const actualCap = p.capacity * siltationFactor;
+                            const actualCap = p.capacity * siltationFactor * availabilityFactor;
                             totalActiveCap += actualCap;
-                            const monthlyGEA = actualCap * 1000 * p.rate * hoursPerMonth;
+                            const monthlyGEA = actualCap * 1000 * effectiveRate * hoursPerMonth;
                             const monthlyMkt = actualCap * 1000 * avgPrice * hoursPerMonth;
                             impRI += Math.max(0, monthlyGEA - monthlyMkt) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
                         }
