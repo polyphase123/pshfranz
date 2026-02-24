@@ -589,6 +589,7 @@
         <div class="tabs">
             <div class="tab active" onclick="switchTab('simulator')">PSH Simulator</div>
             <div class="tab" onclick="switchTab('audit')">ERC Regulatory Audit</div>
+            <div class="tab" onclick="switchTab('suppression')">WESM Price Suppression</div>
         </div>
 
         <div id="simulator" class="tab-content active">
@@ -1013,7 +1014,7 @@
                                 style="font-size: 0.7rem; font-weight: 700; color: var(--success);">100% AUDIT PASS
                                 PROB</span>
                         </div>
-                        <div style="height: 160px;">
+                        <div style="height: 180px;">
                             <canvas id="sensitivityChart"></canvas>
                         </div>
                         <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
@@ -1041,126 +1042,266 @@
                 <div style="padding: 1.25rem;">
                     <p style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">
                         This auditing suite utilizes the <strong>ERC Standard Formulae</strong> for ESS/PSH settlement
-                        oversight. Metrics are recalculated every 5-minute trading interval based on WESM dispatch
-                        signals.
+                        oversight.
                     </p>
-                    <button class="calc-basis-btn" onclick="showInfo('audit_methodology')">📜 View Detailed Calculation
+                    <button class="calc-basis-btn" onclick="showInfo('audit_methodology')">📜 View Detailed
                         Methodology</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="footer-credit">
-            Developed by Franz Xyrlo I. Tobias, PEE
+    <!-- WESM PRICE SUPPRESSION TAB CONTENT -->
+    <div id="suppression" class="tab-content" style="display: none; padding: 2rem 0; min-height: 800px;">
+        <div class="card"
+            style="border-top: 4px solid var(--primary); margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+            <div class="card-header">
+                <div class="card-title" style="color: var(--primary); font-weight: 800; font-size: 1.4rem;">📊 WESM
+                    Price Suppression & 20-Year Forecast</div>
+                <div class="feature-badge" style="background: var(--primary-light); color: var(--primary);">Economic
+                    Resilience Suite</div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 340px; gap: 2.5rem; margin-bottom: 2.5rem;">
+                    <div
+                        style="height: 400px; background: #fff; padding: 1rem; border: 1px solid var(--border-color); border-radius: 1rem; position: relative;">
+                        <canvas id="suppression20YearChart"></canvas>
+                    </div>
+                    <div
+                        style="background: #f8fafc; padding: 1.75rem; border-radius: 1rem; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1.5rem;">
+                        <h4
+                            style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+                            Forecast Parameters</h4>
+
+                        <div>
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
+                                <span>VRE Penetration</span>
+                                <span id="valVRE" style="color: var(--primary);">35%</span>
+                            </label>
+                            <input type="range" min="20" max="80" step="5" value="35"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateSuppressionForecast('vre', this.value)">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Target RE mix
+                                in Luzon Grid by 2045</p>
+                        </div>
+
+                        <div>
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
+                                <span>Global Fuel Trend</span>
+                                <span id="valFuel" style="color: var(--primary);">1.0x</span>
+                            </label>
+                            <input type="range" min="0.5" max="2.5" step="0.1" value="1.0"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateSuppressionForecast('fuel', this.value)">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Projected
+                                relative cost of fossil fuels</p>
+                        </div>
+
+                        <div
+                            style="margin-top: auto; background: var(--primary); padding: 1.25rem; border-radius: 0.75rem; color: white;">
+                            <div style="font-size: 0.65rem; text-transform: uppercase; font-weight: 600; opacity: 0.9;">
+                                Total System Savings</div>
+                            <div id="totalSavings20yr" style="font-size: 1.5rem; font-weight: 800; margin: 0.25rem 0;">
+                                ₱52.4 Billion</div>
+                            <div style="font-size: 0.6rem; opacity: 0.8;">Avoided WESM market costs across life-cycle
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+                    <div class="audit-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 1.25rem;">
+                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Peak Shaving</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Shifting peak load to cheaper base
+                            generation blocks.</p>
+                    </div>
+                    <div class="audit-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 1.25rem;">
+                        <h4 style="color: var(--success); margin-bottom: 0.5rem;">RE Sponge</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Preventing curtailment during peak
+                            solar solar clusters.</p>
+                    </div>
+                    <div class="audit-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 1.25rem;">
+                        <h4 style="color: var(--danger); margin-bottom: 0.5rem;">AS Liquidity</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Providing reserves to lower AS market
+                            clearing prices.</p>
+                    </div>
+                    <div class="audit-card"
+                        style="background: white; border: 1px solid var(--border-color); padding: 1.25rem;">
+                        <h4 style="color: var(--warning); margin-bottom: 0.5rem;">Merit Shift</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">Flattening the supply curve to lower
+                            the marginal price.</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <script>
-            // GEA3 Plant Data from Official Screenshots
-            const PLANTS = {
-                kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, units: 2, unitCap: 250, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028 },
-                wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, units: 3, unitCap: 200, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029 },
-                pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, units: 4, unitCap: 350, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030 },
-                sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, units: 2, unitCap: 400, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031 },
-                sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, units: 2, unitCap: 400, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032 },
-                maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, units: 4, unitCap: 500, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033 },
-                aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, units: 2, unitCap: 125, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034 }
-            };
+        <!-- STRATEGIC ROADMAP -->
+        <div class="card" style="border-top: 4px solid var(--success); margin-bottom: 2rem;">
+            <div class="card-header">
+                <div class="card-title" style="color: var(--success); font-weight: 800;">🚀 PSH Strategic Market Roadmap
+                    (2025 - 2045)</div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+                    <div style="border-left: 2px solid var(--border-color); padding-left: 1.5rem; position: relative;">
+                        <div
+                            style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--border-color);">
+                        </div>
+                        <h5 style="color: var(--text-dark); margin-bottom: 0.75rem;">Phase 1: Stabilization (2025-2030)
+                        </h5>
+                        <ul
+                            style="font-size: 0.725rem; color: var(--text-muted); list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <li>• Initial 2.5GW Integration</li>
+                            <li>• Frequency Response focus</li>
+                            <li>• PSH specific AS Settlement</li>
+                        </ul>
+                    </div>
+                    <div style="border-left: 2px solid var(--primary); padding-left: 1.5rem; position: relative;">
+                        <div
+                            style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--primary);">
+                        </div>
+                        <h5 style="color: var(--primary); margin-bottom: 0.75rem;">Phase 2: Optimization (2031-2038)
+                        </h5>
+                        <ul
+                            style="font-size: 0.725rem; color: var(--text-muted); list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <li>• Bulk Arbitrage Dominance</li>
+                            <li>• Solar Peak Management</li>
+                            <li>• Grid-Scale Congestion Relief</li>
+                        </ul>
+                    </div>
+                    <div style="border-left: 2px solid var(--success); padding-left: 1.5rem; position: relative;">
+                        <div
+                            style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--success);">
+                        </div>
+                        <h5 style="color: var(--success); margin-bottom: 0.75rem;">Phase 3: Maturity (2039-2045)</h5>
+                        <ul
+                            style="font-size: 0.725rem; color: var(--text-muted); list-style: none; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <li>• Merit Curve Neutralization</li>
+                            <li>• Decentralized ESS Hubs</li>
+                            <li>• Long-term Price Stability</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            const HISTORICAL_PRICES = {
-                2025: 4.80,
-                2024: 5.58,
-                2023: 6.44,
-                2022: 7.50
-            };
+    <div class="footer-credit">
+        Developed by Franz Xyrlo I. Tobias, PEE
+    </div>
 
-            const SEASONS = {
-                default: { name: "Average", volatility: 1.1, peakMulti: 1.7 }
-            };
-            let currentSeason = 'default';
+    <script>
+        // GEA3 Plant Data from Official Screenshots
+        const PLANTS = {
+            kibungan: { developer: "Coheco Badeo", name: "Kibungan PSH", capacity: 500, units: 2, unitCap: 250, rate: 2.5787, group: "2028-2030", lot: "Lot 1", startYear: 2028 },
+            wawa1: { developer: "Olympia Violago", name: "Wawa PSH 1", capacity: 600, units: 3, unitCap: 200, rate: 5.3561, group: "2028-2030", lot: "Lot 1", startYear: 2029 },
+            pakil: { developer: "Ahunan Power", name: "Pakil PSH", capacity: 1400, units: 4, unitCap: 350, rate: 5.4597, group: "2028-2030", lot: "Lot 1", startYear: 2030 },
+            sr_lower: { developer: "San Roque Hydro", name: "SR Lower East", capacity: 800, units: 2, unitCap: 400, rate: 3.2500, group: "2031-2035", lot: "Lot 2", startYear: 2031 },
+            sr_west: { developer: "San Roque Hydro", name: "SR West", capacity: 800, units: 2, unitCap: 400, rate: 3.3350, group: "2031-2035", lot: "Lot 2", startYear: 2032 },
+            maton: { developer: "Pan Pacific", name: "Maton PSH", capacity: 2000, units: 4, unitCap: 500, rate: 3.5000, group: "2031-2035", lot: "Lot 3", startYear: 2033 },
+            aklan: { developer: "San Roque Hydro", name: "Aklan PSH", capacity: 250, units: 2, unitCap: 125, rate: 3.7319, group: "2031-2035", lot: "Lot 3", startYear: 2034 }
+        };
 
-            // Assumed system-wide monthly demand for rate impact calculation
-            const SYSTEM_DEMAND_MONTHLY_MWH = 8000000;
+        const HISTORICAL_PRICES = {
+            2025: 4.80,
+            2024: 5.58,
+            2023: 6.44,
+            2022: 7.50
+        };
 
-            let currentPlant = "kibungan";
-            let capacityMW = 500;
-            const ROUNDTRIP_EFF = 0.75;
-            let nonFitGet = 2.5787;
-            const INTERVALS = 288;
+        const SEASONS = {
+            default: { name: "Average", volatility: 1.1, peakMulti: 1.7 }
+        };
+        let currentSeason = 'default';
 
-            let currentInterval = 0;
-            let isSimulating = false;
-            let simInterval;
-            let currentYear = 2025;
-            // currentSeason is already declared above with 'default' 
+        // Assumed system-wide monthly demand for rate impact calculation
+        const SYSTEM_DEMAND_MONTHLY_MWH = 8000000;
 
-            let marketData = [];
-            let waterLevel = 50;
-            let cumulativeGEA = 0;
-            let cumulativeEnergy = 0;
-            let cumulativePumping = 0;
-            let cumulativeAS = 0;
-            let totalMWhGen = 0;
-            let totalMWhPump = 0;
+        let currentPlant = "kibungan";
+        let capacityMW = 500;
+        const ROUNDTRIP_EFF = 0.75;
+        let nonFitGet = 2.5787;
+        const INTERVALS = 288;
 
-            let mustRunActive = false;
-            let zonalLMPActive = false;
-            let pshDerateFactor = 1.0;
-            let marketPriceScalar = 1.0;
+        let currentInterval = 0;
+        let isSimulating = false;
+        let simInterval;
+        let currentYear = 2025;
+        // currentSeason is already declared above with 'default' 
 
-            // Initialize Chart
-            const ctx = document.getElementById('pshChart').getContext('2d');
-            const pshChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: INTERVALS }, (_, i) => {
-                        let h = Math.floor(i / 12);
-                        let m = (i % 12) * 5;
-                        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-                    }),
-                    datasets: [
-                        {
-                            label: 'WESM Price (PHP/kWh)',
-                            data: [],
-                            borderColor: '#2563eb',
-                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                            yAxisID: 'y',
-                            tension: 0.3, pointRadius: 0, fill: true
-                        },
-                        {
-                            label: 'PSH Dispatch (MW)',
-                            data: [],
-                            borderColor: '#10b981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                            yAxisID: 'y1',
-                            type: 'bar', barThickness: 2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: {
-                        x: { ticks: { maxTicksLimit: 12 } },
-                        y: { title: { display: true, text: 'Price (PHP/kWh)' }, position: 'left' },
-                        y1: { title: { display: true, text: 'Dispatch (MW)' }, position: 'right', min: -2000, max: 2000 }
+        let marketData = [];
+        let waterLevel = 50;
+        let cumulativeGEA = 0;
+        let cumulativeEnergy = 0;
+        let cumulativePumping = 0;
+        let cumulativeAS = 0;
+        let totalMWhGen = 0;
+        let totalMWhPump = 0;
+
+        let mustRunActive = false;
+        let zonalLMPActive = false;
+        let pshDerateFactor = 1.0;
+        let marketPriceScalar = 1.0;
+
+        // Initialize Chart
+        const ctx = document.getElementById('pshChart').getContext('2d');
+        const pshChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: INTERVALS }, (_, i) => {
+                    let h = Math.floor(i / 12);
+                    let m = (i % 12) * 5;
+                    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                }),
+                datasets: [
+                    {
+                        label: 'WESM Price (PHP/kWh)',
+                        data: [],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        yAxisID: 'y',
+                        tension: 0.3, pointRadius: 0, fill: true
+                    },
+                    {
+                        label: 'PSH Dispatch (MW)',
+                        data: [],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                        yAxisID: 'y1',
+                        type: 'bar', barThickness: 2
                     }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    x: { ticks: { maxTicksLimit: 12 } },
+                    y: { title: { display: true, text: 'Price (PHP/kWh)' }, position: 'left' },
+                    y1: { title: { display: true, text: 'Dispatch (MW)' }, position: 'right', min: -2000, max: 2000 }
                 }
-            });
+            }
+        });
 
-            const infoContent = {
-                wesm_price: {
-                    title: "WESM Prices (2022-2024)",
-                    citation: "IEMOP SMR 2022-2024 & Wrap Reports",
-                    body: "Historical average clearing prices: 2024 (₱5.58), 2023 (₱6.44), 2022 (₱7.50). High prices in 2022 were driven by global fuel volatility. PSH helps by storing energy during low-price periods and injecting during peaks."
-                },
-                rate_impact: {
-                    title: "Potential Rate Impact",
-                    citation: "Supplemental PSH Policy Section 8.2",
-                    body: "Rate Impact reflects the net cost or benefit passed to consumers (PhP/kWh). <br><br><strong>Logic:</strong> [Total GEA - (Energy Revenue - Pumping Cost) - AS Revenue] / Total System Demand (kWh). <br><br><em>Note: If the net settlement is negative (Revenue > Costs), the impact is 0.0000 or a flow-back.</em>"
-                },
-                audit_methodology: {
-                    title: "ERC Advanced Regulatory Compliance Metrics",
-                    body: `The following formulas define the renumbered regulatory metrics for the PSH suite: <br><br>
+        const infoContent = {
+            wesm_price: {
+                title: "WESM Prices (2022-2024)",
+                citation: "IEMOP SMR 2022-2024 & Wrap Reports",
+                body: "Historical average clearing prices: 2024 (₱5.58), 2023 (₱6.44), 2022 (₱7.50). High prices in 2022 were driven by global fuel volatility. PSH helps by storing energy during low-price periods and injecting during peaks."
+            },
+            rate_impact: {
+                title: "Potential Rate Impact",
+                citation: "Supplemental PSH Policy Section 8.2",
+                body: "Rate Impact reflects the net cost or benefit passed to consumers (PhP/kWh). <br><br><strong>Logic:</strong> [Total GEA - (Energy Revenue - Pumping Cost) - AS Revenue] / Total System Demand (kWh). <br><br><em>Note: If the net settlement is negative (Revenue > Costs), the impact is 0.0000 or a flow-back.</em>"
+            },
+            audit_methodology: {
+                title: "ERC Advanced Regulatory Compliance Metrics",
+                body: `The following formulas define the renumbered regulatory metrics for the PSH suite: <br><br>
                     <b>01. RTE Compliance:</b> Physical <em>η = ΣE<sub>out</sub> / ΣE<sub>in</sub></em>. Ref: DOE Supplemental Policy Sec 6.1. Target ≥ 75%.<br>
                     <b>02. Avoided Peaker Cost:</b> <em>V<sub>avoid</sub> = ΣE<sub>inj</sub> * (P<sub>oil</sub> - P<sub>mkt</sub>)</em>. Oil proxy ₱15/kWh constant.<br>
                     <b>03. VOLL Resilience:</b> Value = <em>S<sub>mwh</sub> * VOLL</em>. (PHT 20,000/MWh). Ref: ERC ASPP Guidelines.<br>
@@ -1168,556 +1309,658 @@
                     <b>05. Pumping Risk Factor:</b> Volatility risk = <em>Price<sub>avg_pump</sub> / Price<sub>avg_annual</sub></em>. Target < 1.0.<br>
                     <b>06. AS Revenue Cap:</b> Revenue audit based on DOE 'Maximum Allowable Revenue' (MAR) for secondary reserves.<br>
                     <b>07. Multi-Project Synergy:</b> Benefit = <em>1 - (Var<sub>combined</sub> / ΣVar<sub>individual</sub>)</em>. Portfolio volatility reduction.`,
-                    citation: "DOE DC2024-01-0003 & ERC Case 2023-011 RC"
-                }
-            };
-
-            function showInfo(key) {
-                const info = infoContent[key] || { title: key, citation: "Internal", body: "Explanation not available." };
-                document.getElementById('modalCitation').innerText = info.citation;
-                document.getElementById('modalTitle').innerText = info.title;
-                document.getElementById('modalBody').innerHTML = info.body;
-                document.getElementById('modal').style.display = 'block';
-                document.getElementById('overlay').style.display = 'block';
+                citation: "DOE DC2024-01-0003 & ERC Case 2023-011 RC"
             }
+        };
 
-            function closeModal() {
-                document.getElementById('modal').style.display = 'none';
-                document.getElementById('overlay').style.display = 'none';
-            }
+        function showInfo(key) {
+            const info = infoContent[key] || { title: key, citation: "Internal", body: "Explanation not available." };
+            document.getElementById('modalCitation').innerText = info.citation;
+            document.getElementById('modalTitle').innerText = info.title;
+            document.getElementById('modalBody').innerHTML = info.body;
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
 
-            function populateTable() {
-                const body = document.getElementById('plantTableBody');
-                body.innerHTML = '';
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
 
-                // Assume 6 hours of high price injection and 6 hours of pumping for comparison
-                const avgPrice = HISTORICAL_PRICES[currentYear];
-                const pumpPrice = avgPrice * 0.8;
-                const injPrice = avgPrice * 1.3;
-                const hoursPerMonth = 30 * 24;
+        function populateTable() {
+            const body = document.getElementById('plantTableBody');
+            body.innerHTML = '';
 
-                Object.values(PLANTS).forEach(p => {
-                    // Approximate monthly settlement math for comparison
-                    const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
-                    const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6); // 6 hrs injection/day
-                    const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6); // 6 hrs pumping/day
-                    const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+            // Assume 6 hours of high price injection and 6 hours of pumping for comparison
+            const avgPrice = HISTORICAL_PRICES[currentYear];
+            const pumpPrice = avgPrice * 0.8;
+            const injPrice = avgPrice * 1.3;
+            const hoursPerMonth = 30 * 24;
 
-                    const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
-                    const ri = Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+            Object.values(PLANTS).forEach(p => {
+                // Approximate monthly settlement math for comparison
+                const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
+                const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6); // 6 hrs injection/day
+                const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6); // 6 hrs pumping/day
+                const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
 
-                    body.innerHTML += `<tr>
+                const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                const ri = Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+                body.innerHTML += `<tr>
                     <td><span class="feature-badge" style="background:#f1f5f9; color:#475569;">${p.lot}</span></td>
                     <td>${p.name}</td>
                     <td>${p.capacity} MW<br><small style="color: var(--text-muted)">${p.units}x${p.unitCap}MW</small></td>
                     <td>₱${p.rate.toFixed(4)}</td>
                     <td style="text-align: right; font-weight: 600; color: var(--primary);">₱${ri.toFixed(4)}</td>
                 </tr>`;
-                });
+            });
+        }
+
+        function updatePlant() {
+            const key = document.getElementById('plantSelect').value;
+            const p = PLANTS[key];
+            currentPlant = key;
+            capacityMW = p.capacity;
+            nonFitGet = p.rate;
+
+            // Updated selection display
+            document.getElementById('selDeveloper').innerText = p.developer;
+            document.getElementById('selFacility').innerText = p.name;
+            document.getElementById('selLot').innerText = p.lot;
+            document.getElementById('selPrice').innerText = `₱${p.rate.toFixed(4)}/kW/h`;
+            document.getElementById('selConfig').innerText = `${p.units} Units x ${p.unitCap} MW`;
+
+            pshChart.options.scales.y1.min = -capacityMW;
+            pshChart.options.scales.y1.max = capacityMW;
+            resetSim();
+        }
+
+        function generateMarketData() {
+            const base = HISTORICAL_PRICES[currentYear] * marketPriceScalar;
+            const s = SEASONS[currentSeason];
+            marketData = [];
+            for (let i = 0; i < INTERVALS; i++) {
+                const hour = i / 12;
+                let multiplier = 1.0;
+                if (hour >= 10 && hour <= 15) multiplier = 1.3 * s.volatility;
+                if (hour >= 18 && hour <= 21) multiplier = s.peakMulti;
+                if (hour >= 0 && hour <= 5) multiplier = 0.6;
+                let price = base * multiplier + (Math.random() - 0.5) * (10 * s.volatility);
+                marketData.push(Math.max(0.5, price));
+            }
+        }
+
+
+
+        function setYear(year) {
+            currentYear = year;
+            document.querySelectorAll('.year-pill').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+            populateTable();
+            resetSim();
+        }
+
+        function resetSim() {
+            currentInterval = 0;
+            waterLevel = 50;
+            cumulativeGEA = 0; cumulativeEnergy = 0; cumulativePumping = 0; cumulativeAS = 0;
+            totalMWhGen = 0; totalMWhPump = 0;
+            generateMarketData();
+            updateUI(null, 0);
+            pshChart.data.datasets[0].data = [];
+            pshChart.data.datasets[1].data = [];
+            pshChart.update();
+
+            document.getElementById('policyLog').innerHTML = '<div style="color: #94a3b8;">[SYSTEM] Simulation Reset. Awaiting Cycle...</div>';
+
+            document.getElementById('verdictTitle').innerText = "Simulation Reset";
+            document.getElementById('verdictBody').innerText = "Click Run to analyze " + PLANTS[currentPlant].name + " for " + currentYear + ".";
+            document.getElementById('consumerVerdictCard').style.background = "var(--primary-light)";
+            document.getElementById('consumerVerdictCard').style.borderColor = "var(--primary)";
+        }
+
+        function addLog(msg, color = "#38bdf8") {
+            const log = document.getElementById('policyLog');
+            const timeStr = (currentInterval > 0) ? pshChart.data.labels[currentInterval - 1] : "0.0";
+            log.innerHTML += `<div><span style="color: #64748b;">[${timeStr}h]</span> <span style="color:${color}">${msg}</span></div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function step() {
+            if (currentInterval >= INTERVALS) {
+                toggleSim();
+                finalizeVerdict();
+                addLog("CRITICAL: 24h Cycle Complete. Finalizing Regulatory Verdict.", "#10b981");
+                return;
             }
 
-            function updatePlant() {
-                const key = document.getElementById('plantSelect').value;
-                const p = PLANTS[key];
-                currentPlant = key;
-                capacityMW = p.capacity;
-                nonFitGet = p.rate;
+            const price = marketData[currentInterval];
+            let dispatch = 0;
+            let logMsg = "";
 
-                // Updated selection display
-                document.getElementById('selDeveloper').innerText = p.developer;
-                document.getElementById('selFacility').innerText = p.name;
-                document.getElementById('selLot').innerText = p.lot;
-                document.getElementById('selPrice').innerText = `₱${p.rate.toFixed(4)}/kW/h`;
-                document.getElementById('selConfig').innerText = `${p.units} Units x ${p.unitCap} MW`;
+            const avg = HISTORICAL_PRICES[currentYear];
 
-                pshChart.options.scales.y1.min = -capacityMW;
-                pshChart.options.scales.y1.max = capacityMW;
-                resetSim();
+            if (mustRunActive) {
+                dispatch = capacityMW * pshDerateFactor;
+                waterLevel -= 0.5 * pshDerateFactor;
+                logMsg = `[DC Sec 6.3] GRID ALERT: Forced N-1 Dispatch. Prioritizing Stability over Market.`;
+            } else if (price > (avg * 1.3) && waterLevel > 10) {
+                dispatch = capacityMW * pshDerateFactor;
+                waterLevel -= 0.5 * pshDerateFactor;
+                logMsg = `[DC Sec 4.2] Generation Triggered: Price (₱${price.toFixed(2)}) > 1.3x Benchmark.`;
+            } else if (price < (avg * 0.8) && waterLevel < 95) {
+                dispatch = -capacityMW * pshDerateFactor;
+                waterLevel += 0.5 * ROUNDTRIP_EFF * pshDerateFactor;
+                logMsg = `[DC Sec 4.2] Pumping Triggered: Charging at Low-Cost WESM (₱${price.toFixed(2)}).`;
+            } else {
+                logMsg = `[DC Sec 3.1] Standby: Accruing GEA Capacity Availability Payment.`;
             }
 
-            function generateMarketData() {
-                const base = HISTORICAL_PRICES[currentYear] * marketPriceScalar;
-                const s = SEASONS[currentSeason];
-                marketData = [];
-                for (let i = 0; i < INTERVALS; i++) {
-                    const hour = i / 12;
-                    let multiplier = 1.0;
-                    if (hour >= 10 && hour <= 15) multiplier = 1.3 * s.volatility;
-                    if (hour >= 18 && hour <= 21) multiplier = s.peakMulti;
-                    if (hour >= 0 && hour <= 5) multiplier = 0.6;
-                    let price = base * multiplier + (Math.random() - 0.5) * (10 * s.volatility);
-                    marketData.push(Math.max(0.5, price));
+            addLog(logMsg);
+
+            const duration = 5 / 60;
+            cumulativeGEA += (capacityMW * 1000 * nonFitGet * duration);
+
+            if (dispatch > 0) {
+                cumulativeEnergy += (dispatch * 1000 * price * duration);
+                totalMWhGen += (dispatch * duration);
+            } else if (dispatch < 0) {
+                cumulativePumping += (Math.abs(dispatch) * 1000 * price * duration);
+                totalMWhPump += (Math.abs(dispatch) * duration);
+            }
+
+            cumulativeAS += (capacityMW * 3.5 * duration);
+            pshChart.data.datasets[0].data.push(price);
+            pshChart.data.datasets[1].data.push(dispatch);
+
+            currentInterval++;
+            updateUI(price, dispatch);
+            pshChart.update('none');
+        }
+
+        function updateUI(price, dispatch) {
+            if (price !== null) {
+                document.getElementById('currentPrice').innerHTML = `₱${price.toFixed(2)}<small>/kWh</small>`;
+                document.getElementById('currentDispatch').innerText = `${dispatch} MW`;
+                document.getElementById('simTime').innerText = pshChart.data.labels[currentInterval - 1] + " H";
+
+                const modeEl = document.getElementById('dispatchMode');
+                if (dispatch > 0) { modeEl.innerText = "GENERATING"; modeEl.style.background = "#dcfce7"; modeEl.style.color = "#166534"; }
+                else if (dispatch < 0) { modeEl.innerText = "PUMPING"; modeEl.style.background = "#dbeafe"; modeEl.style.color = "#1e40af"; }
+                else { modeEl.innerText = "STANDBY"; modeEl.style.background = "#f1f5f9"; modeEl.style.color = "#64748b"; }
+            }
+
+            document.getElementById('waterLevel').style.height = `${waterLevel}%`;
+            document.getElementById('waterPct').innerText = `${Math.round(waterLevel)}%`;
+
+            const netCost = cumulativeGEA - cumulativeEnergy + cumulativePumping - cumulativeAS;
+            // Socialize over monthly demand: (Daily Cost * 30 days) / (Monthly MWh * 1000)
+            const ri = Math.max(0, netCost * 30) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+            document.getElementById('netSettlement').innerText = `₱${Math.abs(netCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('rateImpact').innerHTML = `₱${ri.toFixed(4)}<small>/kWh</small>`;
+
+            document.getElementById('breakdownGEA').innerText = `₱${cumulativeGEA.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('breakdownEnergy').innerText = `₱${cumulativeEnergy.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('breakdownPumping').innerText = `(₱${cumulativePumping.toLocaleString(undefined, { maximumFractionDigits: 0 })})`;
+            document.getElementById('breakdownAS').innerText = `₱${cumulativeAS.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('breakdownTotal').innerText = `₱${netCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            const badge = document.getElementById('verdictBadge');
+            if (ri < 0.04) { badge.innerText = "GOOD"; badge.style.background = "#dcfce7"; badge.style.color = "#166534"; }
+            else { badge.innerText = "MODERATE"; badge.style.background = "#fef3c7"; badge.style.color = "#92400e"; }
+
+            // Update Audit Tab Metrics
+            // RTE must be physical energy efficiency (Energy Out / Energy In), not monetary
+            const physicalRte = totalMWhPump > 0 ? (totalMWhGen / totalMWhPump) : 0;
+            document.getElementById('auditRTE').innerText = `${(physicalRte * 100).toFixed(1)}%`;
+            const rteStatus = document.getElementById('rteStatus');
+            if (physicalRte >= 0.75) { rteStatus.innerText = "✅ Compliance Met (Physical)"; rteStatus.style.color = "var(--success)"; }
+            else { rteStatus.innerText = "⚠️ Under Efficiency Benchmark"; rteStatus.style.color = "var(--danger)"; }
+
+            const avoidedPeaker = totalMWhGen * 1000 * (15 - (HISTORICAL_PRICES[currentYear] || 5));
+            document.getElementById('auditPeaker').innerText = `₱${Math.max(0, avoidedPeaker).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            const voll = waterLevel * (capacityMW * 4) * 20000 / 100;
+            document.getElementById('auditVOLL').innerText = `₱${voll.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            const co2 = (cumulativeEnergy / 1000) * 0.7; // 0.7 tCO2 per MWh
+            document.getElementById('auditCO2').innerText = `${co2.toFixed(2)} tCO2`;
+
+            // Advanced Audit Logic
+            const avgPrice = HISTORICAL_PRICES[currentYear] || 5;
+            document.getElementById('auditPumpingRisk').innerText = (price > avgPrice * 1.5) ? "HIGH" : "NORMAL";
+            document.getElementById('auditPumpingRisk').style.color = (price > avgPrice * 1.5) ? "var(--danger)" : "var(--success)";
+
+            const asRevenueActual = cumulativeAS;
+            const energyOppCost = (capacityMW * 1000 * (avgPrice * 0.5) * currentInterval * (5 / 60)); // Placeholder opp cost
+            document.getElementById('auditAS').innerText = (asRevenueActual > energyOppCost) ? "Pass" : "Audit Required";
+            document.getElementById('auditAS').style.color = (asRevenueActual > energyOppCost) ? "var(--success)" : "var(--warning)";
+        }
+
+        function finalizeVerdict() {
+            const netCost = cumulativeGEA - cumulativeEnergy + cumulativePumping - cumulativeAS;
+            const ri = Math.max(0, netCost * 30) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+
+            let title = ri < 0.04 ? "✅ Consumer Friendly" : (ri < 0.10 ? "⚖️ Fair Value" : "⚠️ High Cost Pressure");
+            let body = `Analysis for ${PLANTS[currentPlant].name} (${currentYear} prices): The estimated rate impact is ₱${ri.toFixed(4)}/kWh. `;
+
+            if (ri < 0.04) {
+                body += "This is GOOD for consumers. The revenue from energy trading and ancillary services significantly mitigates the capacity payment cost.";
+            } else {
+                body += "The net cost is moderate. While it adds a small charge to the bill, the PSH provides critical grid stability and avoids more expensive peak generation.";
+            }
+
+            document.getElementById('verdictTitle').innerText = title;
+            document.getElementById('verdictBody').innerText = body;
+            document.getElementById('consumerVerdictCard').style.background = ri < 0.04 ? "#f0fdf4" : "#fffbeb";
+            document.getElementById('consumerVerdictCard').style.borderColor = ri < 0.04 ? "#22c55e" : "#f59e0b";
+
+            // Update Lifecycle Projection
+            document.getElementById('projDaily').innerText = `₱${netCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('projMonthly').innerText = `₱${(netCost * 30).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('projAnnual').innerText = `₱${(netCost * 365).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('proj20Year').innerText = `₱${(netCost * 365 * 20).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+        }
+
+        function switchTab(tabId) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.style.display = 'none';
+                content.classList.remove('active');
+            });
+
+            // Deactivate all tab buttons
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show target content
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.style.display = 'block';
+                // Trigger small delay for CSS transition
+                setTimeout(() => target.classList.add('active'), 20);
+            }
+
+            // Activate corresponding tab button
+            tabs.forEach(tab => {
+                const btnOnclick = tab.getAttribute('onclick') || '';
+                if (btnOnclick.includes(`'${tabId}'`)) {
+                    tab.classList.add('active');
                 }
+            });
+
+            // Handle suppression chart initialization
+            if (tabId === 'suppression' && !suppressionChart20yr) {
+                initSuppressionChart();
+                updateSuppressionForecast('vre', 35); // Initialize with default VRE
+                updateSuppressionForecast('fuel', 1.0); // Initialize with default Fuel
             }
 
-
-
-            function setYear(year) {
-                currentYear = year;
-                document.querySelectorAll('.year-pill').forEach(p => p.classList.remove('active'));
-                event.target.classList.add('active');
-                populateTable();
-                resetSim();
-            }
-
-            function resetSim() {
-                currentInterval = 0;
-                waterLevel = 50;
-                cumulativeGEA = 0; cumulativeEnergy = 0; cumulativePumping = 0; cumulativeAS = 0;
-                totalMWhGen = 0; totalMWhPump = 0;
-                generateMarketData();
-                updateUI(null, 0);
-                pshChart.data.datasets[0].data = [];
-                pshChart.data.datasets[1].data = [];
+            // Handle simulator chart resizing
+            if (tabId === 'simulator' && pshChart) {
+                pshChart.resize();
                 pshChart.update();
+            }
+        }
 
-                document.getElementById('policyLog').innerHTML = '<div style="color: #94a3b8;">[SYSTEM] Simulation Reset. Awaiting Cycle...</div>';
+        let stressScenario = 'baseline';
+        function updateStressParam(type, val) {
+            if (type === 'gea') {
+                nonFitGet = parseFloat(val);
+                document.getElementById('valGET').innerText = nonFitGet.toFixed(4);
+            } else if (type === 'volatility') {
+                const volVal = parseFloat(val);
+                document.getElementById('valVol').innerText = volVal.toFixed(1);
+                SEASONS.default.volatility = 1.1 * volVal;
+            } else if (type === 'scenario') {
+                stressScenario = val;
+                const badge = document.getElementById('scenarioBadge');
+                badge.innerText = val.charAt(0).toUpperCase() + val.slice(1);
+                if (val === 'heatwave') {
+                    SEASONS.default.volatility = 1.8;
+                    document.getElementById('slideVol').value = 1.6;
+                    document.getElementById('valVol').innerText = "1.6";
+                } else if (val === 'baseline') {
+                    SEASONS.default.volatility = 1.1;
+                    document.getElementById('slideVol').value = 1.0;
+                    document.getElementById('valVol').innerText = "1.0";
+                }
+            } else if (type === 'derate') {
+                pshDerateFactor = parseFloat(val) / 100;
+                document.getElementById('valDerate').innerText = val + "%";
+                document.getElementById('valDerate').style.color = val < 100 ? 'var(--danger)' : 'var(--success)';
+            } else if (type === 'scalar') {
+                marketPriceScalar = parseFloat(val);
+                document.getElementById('valScalar').innerText = marketPriceScalar.toFixed(1) + "x";
+            }
+            resetSim();
+            updateSensitivityChart();
+        }
 
-                document.getElementById('verdictTitle').innerText = "Simulation Reset";
-                document.getElementById('verdictBody').innerText = "Click Run to analyze " + PLANTS[currentPlant].name + " for " + currentYear + ".";
-                document.getElementById('consumerVerdictCard').style.background = "var(--primary-light)";
-                document.getElementById('consumerVerdictCard').style.borderColor = "var(--primary)";
+        function toggleMustRun() {
+            mustRunActive = !mustRunActive;
+            const btn = document.getElementById('btnMustRun');
+            btn.classList.toggle('active');
+            btn.style.background = mustRunActive ? 'var(--primary)' : '';
+            btn.style.color = mustRunActive ? '#fff' : '';
+            updateSensitivityChart();
+        }
+
+        function toggleZonalLMP() {
+            zonalLMPActive = !zonalLMPActive;
+            const btn = document.getElementById('btnZonal');
+            btn.classList.toggle('active');
+            btn.style.background = zonalLMPActive ? 'var(--primary)' : '';
+            btn.style.color = zonalLMPActive ? '#fff' : '';
+            updateSensitivityChart();
+        }
+
+        let sensitivityChartInstance = null;
+        function updateSensitivityChart() {
+            const canvas = document.getElementById('sensitivityChart');
+            if (!canvas) return;
+            const ctxS = canvas.getContext('2d');
+            const labels = [];
+            const riData = [];
+            const ciUpper = [];
+            const ciLower = [];
+
+            const p = PLANTS[currentPlant];
+            const effectiveCap = p.capacity * pshDerateFactor;
+            const hoursPerMonth = 30 * 24;
+            const avgPrice = (HISTORICAL_PRICES[currentYear] || 5.0) * marketPriceScalar;
+            const volatility = SEASONS.default.volatility;
+
+            // Predictive Math if simulation hasn't run
+            for (let i = 0; i <= 10; i++) {
+                const testGea = 1.5 + (i * (8 - 1.5) / 10);
+                labels.push(testGea.toFixed(1));
+
+                const monthlyGEA = p.capacity * 1000 * testGea * hoursPerMonth;
+                const injPrice = avgPrice * (zonalLMPActive ? 1.5 : 1.3);
+                const pumpPrice = avgPrice * 0.7 * (1 / volatility);
+
+                const monthlyEnergy = effectiveCap * 1000 * injPrice * (30 * 6);
+                const monthlyPumping = effectiveCap * 1000 * pumpPrice * (30 * 6) * (mustRunActive ? 1.2 : 1.0);
+                const monthlyAS = effectiveCap * 3.5 * hoursPerMonth;
+
+                const net = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                const ri = Math.max(0, net) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
+                riData.push(ri.toFixed(4));
+                ciUpper.push((ri * 1.15).toFixed(4));
+                ciLower.push((ri * 0.85).toFixed(4));
             }
 
-            function addLog(msg, color = "#38bdf8") {
-                const log = document.getElementById('policyLog');
-                const timeStr = (currentInterval > 0) ? pshChart.data.labels[currentInterval - 1] : "0.0";
-                log.innerHTML += `<div><span style="color: #64748b;">[${timeStr}h]</span> <span style="color:${color}">${msg}</span></div>`;
-                log.scrollTop = log.scrollHeight;
-            }
+            const maxRI = Math.max(...riData);
+            document.getElementById('stressMaxRI').innerText = `₱${parseFloat(maxRI).toFixed(4)}`;
+            const prob = maxRI > 0.1 ? "⚠️ 65% PASS" : "✅ 100% PASS";
+            document.getElementById('complianceProb').innerText = prob;
+            document.getElementById('complianceProb').style.color = maxRI > 0.1 ? 'var(--danger)' : 'var(--success)';
 
-            function step() {
-                if (currentInterval >= INTERVALS) {
-                    toggleSim();
-                    finalizeVerdict();
-                    addLog("CRITICAL: 24h Cycle Complete. Finalizing Regulatory Verdict.", "#10b981");
-                    return;
-                }
-
-                const price = marketData[currentInterval];
-                let dispatch = 0;
-                let logMsg = "";
-
-                const avg = HISTORICAL_PRICES[currentYear];
-
-                if (mustRunActive) {
-                    dispatch = capacityMW * pshDerateFactor;
-                    waterLevel -= 0.5 * pshDerateFactor;
-                    logMsg = `[DC Sec 6.3] GRID ALERT: Forced N-1 Dispatch. Prioritizing Stability over Market.`;
-                } else if (price > (avg * 1.3) && waterLevel > 10) {
-                    dispatch = capacityMW * pshDerateFactor;
-                    waterLevel -= 0.5 * pshDerateFactor;
-                    logMsg = `[DC Sec 4.2] Generation Triggered: Price (₱${price.toFixed(2)}) > 1.3x Benchmark.`;
-                } else if (price < (avg * 0.8) && waterLevel < 95) {
-                    dispatch = -capacityMW * pshDerateFactor;
-                    waterLevel += 0.5 * ROUNDTRIP_EFF * pshDerateFactor;
-                    logMsg = `[DC Sec 4.2] Pumping Triggered: Charging at Low-Cost WESM (₱${price.toFixed(2)}).`;
-                } else {
-                    logMsg = `[DC Sec 3.1] Standby: Accruing GEA Capacity Availability Payment.`;
-                }
-
-                addLog(logMsg);
-
-                const duration = 5 / 60;
-                cumulativeGEA += (capacityMW * 1000 * nonFitGet * duration);
-
-                if (dispatch > 0) {
-                    cumulativeEnergy += (dispatch * 1000 * price * duration);
-                    totalMWhGen += (dispatch * duration);
-                } else if (dispatch < 0) {
-                    cumulativePumping += (Math.abs(dispatch) * 1000 * price * duration);
-                    totalMWhPump += (Math.abs(dispatch) * duration);
-                }
-
-                cumulativeAS += (capacityMW * 3.5 * duration);
-                pshChart.data.datasets[0].data.push(price);
-                pshChart.data.datasets[1].data.push(dispatch);
-
-                currentInterval++;
-                updateUI(price, dispatch);
-                pshChart.update('none');
-            }
-
-            function updateUI(price, dispatch) {
-                if (price !== null) {
-                    document.getElementById('currentPrice').innerHTML = `₱${price.toFixed(2)}<small>/kWh</small>`;
-                    document.getElementById('currentDispatch').innerText = `${dispatch} MW`;
-                    document.getElementById('simTime').innerText = pshChart.data.labels[currentInterval - 1] + " H";
-
-                    const modeEl = document.getElementById('dispatchMode');
-                    if (dispatch > 0) { modeEl.innerText = "GENERATING"; modeEl.style.background = "#dcfce7"; modeEl.style.color = "#166534"; }
-                    else if (dispatch < 0) { modeEl.innerText = "PUMPING"; modeEl.style.background = "#dbeafe"; modeEl.style.color = "#1e40af"; }
-                    else { modeEl.innerText = "STANDBY"; modeEl.style.background = "#f1f5f9"; modeEl.style.color = "#64748b"; }
-                }
-
-                document.getElementById('waterLevel').style.height = `${waterLevel}%`;
-                document.getElementById('waterPct').innerText = `${Math.round(waterLevel)}%`;
-
-                const netCost = cumulativeGEA - cumulativeEnergy + cumulativePumping - cumulativeAS;
-                // Socialize over monthly demand: (Daily Cost * 30 days) / (Monthly MWh * 1000)
-                const ri = Math.max(0, netCost * 30) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
-
-                document.getElementById('netSettlement').innerText = `₱${Math.abs(netCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('rateImpact').innerHTML = `₱${ri.toFixed(4)}<small>/kWh</small>`;
-
-                document.getElementById('breakdownGEA').innerText = `₱${cumulativeGEA.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('breakdownEnergy').innerText = `₱${cumulativeEnergy.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('breakdownPumping').innerText = `(₱${cumulativePumping.toLocaleString(undefined, { maximumFractionDigits: 0 })})`;
-                document.getElementById('breakdownAS').innerText = `₱${cumulativeAS.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('breakdownTotal').innerText = `₱${netCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-
-                const badge = document.getElementById('verdictBadge');
-                if (ri < 0.04) { badge.innerText = "GOOD"; badge.style.background = "#dcfce7"; badge.style.color = "#166534"; }
-                else { badge.innerText = "MODERATE"; badge.style.background = "#fef3c7"; badge.style.color = "#92400e"; }
-
-                // Update Audit Tab Metrics
-                // RTE must be physical energy efficiency (Energy Out / Energy In), not monetary
-                const physicalRte = totalMWhPump > 0 ? (totalMWhGen / totalMWhPump) : 0;
-                document.getElementById('auditRTE').innerText = `${(physicalRte * 100).toFixed(1)}%`;
-                const rteStatus = document.getElementById('rteStatus');
-                if (physicalRte >= 0.75) { rteStatus.innerText = "✅ Compliance Met (Physical)"; rteStatus.style.color = "var(--success)"; }
-                else { rteStatus.innerText = "⚠️ Under Efficiency Benchmark"; rteStatus.style.color = "var(--danger)"; }
-
-                const avoidedPeaker = totalMWhGen * 1000 * (15 - (HISTORICAL_PRICES[currentYear] || 5));
-                document.getElementById('auditPeaker').innerText = `₱${Math.max(0, avoidedPeaker).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-
-                const voll = waterLevel * (capacityMW * 4) * 20000 / 100;
-                document.getElementById('auditVOLL').innerText = `₱${voll.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-
-                const co2 = (cumulativeEnergy / 1000) * 0.7; // 0.7 tCO2 per MWh
-                document.getElementById('auditCO2').innerText = `${co2.toFixed(2)} tCO2`;
-
-                // Advanced Audit Logic
-                const avgPrice = HISTORICAL_PRICES[currentYear] || 5;
-                document.getElementById('auditPumpingRisk').innerText = (price > avgPrice * 1.5) ? "HIGH" : "NORMAL";
-                document.getElementById('auditPumpingRisk').style.color = (price > avgPrice * 1.5) ? "var(--danger)" : "var(--success)";
-
-                const asRevenueActual = cumulativeAS;
-                const energyOppCost = (capacityMW * 1000 * (avgPrice * 0.5) * currentInterval * (5 / 60)); // Placeholder opp cost
-                document.getElementById('auditAS').innerText = (asRevenueActual > energyOppCost) ? "Pass" : "Audit Required";
-                document.getElementById('auditAS').style.color = (asRevenueActual > energyOppCost) ? "var(--success)" : "var(--warning)";
-            }
-
-            function finalizeVerdict() {
-                const netCost = cumulativeGEA - cumulativeEnergy + cumulativePumping - cumulativeAS;
-                const ri = Math.max(0, netCost * 30) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
-
-                let title = ri < 0.04 ? "✅ Consumer Friendly" : (ri < 0.10 ? "⚖️ Fair Value" : "⚠️ High Cost Pressure");
-                let body = `Analysis for ${PLANTS[currentPlant].name} (${currentYear} prices): The estimated rate impact is ₱${ri.toFixed(4)}/kWh. `;
-
-                if (ri < 0.04) {
-                    body += "This is GOOD for consumers. The revenue from energy trading and ancillary services significantly mitigates the capacity payment cost.";
-                } else {
-                    body += "The net cost is moderate. While it adds a small charge to the bill, the PSH provides critical grid stability and avoids more expensive peak generation.";
-                }
-
-                document.getElementById('verdictTitle').innerText = title;
-                document.getElementById('verdictBody').innerText = body;
-                document.getElementById('consumerVerdictCard').style.background = ri < 0.04 ? "#f0fdf4" : "#fffbeb";
-                document.getElementById('consumerVerdictCard').style.borderColor = ri < 0.04 ? "#22c55e" : "#f59e0b";
-
-                // Update Lifecycle Projection
-                document.getElementById('projDaily').innerText = `₱${netCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('projMonthly').innerText = `₱${(netCost * 30).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('projAnnual').innerText = `₱${(netCost * 365).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-                document.getElementById('proj20Year').innerText = `₱${(netCost * 365 * 20).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-            }
-
-            function switchTab(tabId) {
-                // Hide all tab contents
-                const contents = document.querySelectorAll('.tab-content');
-                contents.forEach(content => {
-                    content.classList.remove('active');
-                    content.style.display = 'none';
-                });
-
-                // Deactivate all tab buttons
-                const tabs = document.querySelectorAll('.tab');
-                tabs.forEach(tab => tab.classList.remove('active'));
-
-                // Show target content
-                const target = document.getElementById(tabId);
-                if (target) {
-                    target.classList.add('active');
-                    target.style.display = 'block';
-                }
-
-                // Activate corresponding tab button
-                tabs.forEach(tab => {
-                    const clickAttr = tab.getAttribute('onclick') || '';
-                    if (clickAttr.includes(`'${tabId}'`)) {
-                        tab.classList.add('active');
-                    }
-                });
-
-                // Update chart if switching to simulator to ensure it's properly sized
-                if (tabId === 'simulator' && pshChart) {
-                    pshChart.resize();
-                    pshChart.update();
-                }
-            }
-
-            let stressScenario = 'baseline';
-            function updateStressParam(type, val) {
-                if (type === 'gea') {
-                    nonFitGet = parseFloat(val);
-                    document.getElementById('valGET').innerText = nonFitGet.toFixed(4);
-                } else if (type === 'volatility') {
-                    const volVal = parseFloat(val);
-                    document.getElementById('valVol').innerText = volVal.toFixed(1);
-                    SEASONS.default.volatility = 1.1 * volVal;
-                } else if (type === 'scenario') {
-                    stressScenario = val;
-                    const badge = document.getElementById('scenarioBadge');
-                    badge.innerText = val.charAt(0).toUpperCase() + val.slice(1);
-                    if (val === 'heatwave') {
-                        SEASONS.default.volatility = 1.8;
-                        document.getElementById('slideVol').value = 1.6;
-                        document.getElementById('valVol').innerText = "1.6";
-                    } else if (val === 'baseline') {
-                        SEASONS.default.volatility = 1.1;
-                        document.getElementById('slideVol').value = 1.0;
-                        document.getElementById('valVol').innerText = "1.0";
-                    }
-                } else if (type === 'derate') {
-                    pshDerateFactor = parseFloat(val) / 100;
-                    document.getElementById('valDerate').innerText = val + "%";
-                    document.getElementById('valDerate').style.color = val < 100 ? 'var(--danger)' : 'var(--success)';
-                } else if (type === 'scalar') {
-                    marketPriceScalar = parseFloat(val);
-                    document.getElementById('valScalar').innerText = marketPriceScalar.toFixed(1) + "x";
-                }
-                resetSim();
-                updateSensitivityChart();
-            }
-
-            function toggleMustRun() {
-                mustRunActive = !mustRunActive;
-                const btn = document.getElementById('btnMustRun');
-                btn.classList.toggle('active');
-                btn.style.background = mustRunActive ? 'var(--primary)' : '';
-                btn.style.color = mustRunActive ? '#fff' : '';
-                updateSensitivityChart();
-            }
-
-            function toggleZonalLMP() {
-                zonalLMPActive = !zonalLMPActive;
-                const btn = document.getElementById('btnZonal');
-                btn.classList.toggle('active');
-                btn.style.background = zonalLMPActive ? 'var(--primary)' : '';
-                btn.style.color = zonalLMPActive ? '#fff' : '';
-                updateSensitivityChart();
-            }
-
-            let sensitivityChartInstance = null;
-            function updateSensitivityChart() {
-                const canvas = document.getElementById('sensitivityChart');
-                if (!canvas) return;
-                const ctxS = canvas.getContext('2d');
-                const labels = [];
-                const riData = [];
-                const ciUpper = [];
-                const ciLower = [];
-
-                const p = PLANTS[currentPlant];
-                const effectiveCap = p.capacity * pshDerateFactor;
-                const hoursPerMonth = 30 * 24;
-                const avgPrice = (HISTORICAL_PRICES[currentYear] || 5.0) * marketPriceScalar;
-                const volatility = SEASONS.default.volatility;
-
-                // Predictive Math if simulation hasn't run
-                for (let i = 0; i <= 10; i++) {
-                    const testGea = 1.5 + (i * (8 - 1.5) / 10);
-                    labels.push(testGea.toFixed(1));
-
-                    const monthlyGEA = p.capacity * 1000 * testGea * hoursPerMonth;
-                    const injPrice = avgPrice * (zonalLMPActive ? 1.5 : 1.3);
-                    const pumpPrice = avgPrice * 0.7 * (1 / volatility);
-
-                    const monthlyEnergy = effectiveCap * 1000 * injPrice * (30 * 6);
-                    const monthlyPumping = effectiveCap * 1000 * pumpPrice * (30 * 6) * (mustRunActive ? 1.2 : 1.0);
-                    const monthlyAS = effectiveCap * 3.5 * hoursPerMonth;
-
-                    const net = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
-                    const ri = Math.max(0, net) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
-                    riData.push(ri.toFixed(4));
-                    ciUpper.push((ri * 1.15).toFixed(4));
-                    ciLower.push((ri * 0.85).toFixed(4));
-                }
-
-                const maxRI = Math.max(...riData);
-                document.getElementById('stressMaxRI').innerText = `₱${parseFloat(maxRI).toFixed(4)}`;
-                const prob = maxRI > 0.1 ? "⚠️ 65% PASS" : "✅ 100% PASS";
-                document.getElementById('complianceProb').innerText = prob;
-                document.getElementById('complianceProb').style.color = maxRI > 0.1 ? 'var(--danger)' : 'var(--success)';
-
-                if (sensitivityChartInstance) sensitivityChartInstance.destroy();
-                sensitivityChartInstance = new Chart(ctxS, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Rate Impact (₱/kWh)',
-                                data: riData,
-                                borderColor: '#2563eb',
-                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                                fill: true,
-                                tension: 0.4,
-                                z: 10
-                            },
-                            {
-                                label: '95% CI Zone',
-                                data: ciUpper,
-                                borderColor: 'transparent',
-                                backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                                fill: '+1',
-                                pointRadius: 0,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Lower Bound',
-                                data: ciLower,
-                                borderColor: 'transparent',
-                                backgroundColor: 'rgba(37, 99, 235, 0.05)',
-                                fill: false,
-                                pointRadius: 0,
-                                tension: 0.4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { title: { display: true, text: 'GEA Rate (PhP/kW)', font: { size: 8 } }, ticks: { font: { size: 7 } } },
-                            y: { title: { display: true, text: 'Impact', font: { size: 8 } }, ticks: { font: { size: 7 } }, min: 0 }
+            if (sensitivityChartInstance) sensitivityChartInstance.destroy();
+            sensitivityChartInstance = new Chart(ctxS, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Rate Impact (₱/kWh)',
+                            data: riData,
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            z: 10
+                        },
+                        {
+                            label: '95% CI Zone',
+                            data: ciUpper,
+                            borderColor: 'transparent',
+                            backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                            fill: '+1',
+                            pointRadius: 0,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Lower Bound',
+                            data: ciLower,
+                            borderColor: 'transparent',
+                            backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0.4
                         }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { title: { display: true, text: 'GEA Rate (PhP/kW)', font: { size: 8 } }, ticks: { font: { size: 7 } } },
+                        y: { title: { display: true, text: 'Impact', font: { size: 8 } }, ticks: { font: { size: 7 } }, min: 0 }
+                    }
+                }
+            });
+        }
+
+        let roadmapChartInstance = null;
+        function populateRoadmap() {
+            const body = document.getElementById('roadmapTableBody');
+            if (!body) return;
+            body.innerHTML = '';
+            const avgPrice = HISTORICAL_PRICES[2025] || 4.80;
+            const pumpPrice = avgPrice * 0.8;
+            const injPrice = avgPrice * 1.3;
+            const hoursPerMonth = 30 * 24;
+
+            const years = [];
+            const capacities = [];
+            const unitCounts = [];
+            const impacts = [];
+
+            for (let year = 2028; year <= 2045; year++) {
+                let totalRI = 0;
+                let activeCount = 0;
+                let activeCap = 0;
+
+                Object.values(PLANTS).forEach(p => {
+                    if (year >= p.startYear) {
+                        activeCount++;
+                        activeCap += p.capacity;
+                        const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
+                        const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
+                        const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6);
+                        const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
+                        const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
+                        totalRI += Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
                     }
                 });
-            }
 
-            let roadmapChartInstance = null;
-            function populateRoadmap() {
-                const body = document.getElementById('roadmapTableBody');
-                if (!body) return;
-                body.innerHTML = '';
-                const avgPrice = HISTORICAL_PRICES[2025] || 4.80;
-                const pumpPrice = avgPrice * 0.8;
-                const injPrice = avgPrice * 1.3;
-                const hoursPerMonth = 30 * 24;
+                if (activeCount > 0) {
+                    years.push(year);
+                    capacities.push(activeCap);
+                    unitCounts.push(activeCount);
+                    impacts.push(parseFloat(totalRI.toFixed(4)));
 
-                const years = [];
-                const capacities = [];
-                const unitCounts = [];
-                const impacts = [];
-
-                for (let year = 2028; year <= 2045; year++) {
-                    let totalRI = 0;
-                    let activeCount = 0;
-                    let activeCap = 0;
-
-                    Object.values(PLANTS).forEach(p => {
-                        if (year >= p.startYear) {
-                            activeCount++;
-                            activeCap += p.capacity;
-                            const monthlyGEA = p.capacity * 1000 * p.rate * hoursPerMonth;
-                            const monthlyEnergy = p.capacity * 1000 * injPrice * (30 * 6);
-                            const monthlyPumping = p.capacity * 1000 * pumpPrice * (30 * 6);
-                            const monthlyAS = p.capacity * 3.5 * hoursPerMonth;
-                            const netSettlement = monthlyGEA - (monthlyEnergy - monthlyPumping) - monthlyAS;
-                            totalRI += Math.max(0, netSettlement) / (SYSTEM_DEMAND_MONTHLY_MWH * 1000);
-                        }
-                    });
-
-                    if (activeCount > 0) {
-                        years.push(year);
-                        capacities.push(activeCap);
-                        unitCounts.push(activeCount);
-                        impacts.push(parseFloat(totalRI.toFixed(4)));
-
-                        body.innerHTML += `<tr>
+                    body.innerHTML += `<tr>
                                 <td><strong>${year}</strong></td>
                                 <td>${activeCount} Units</td>
                                 <td>${activeCap} MW</td>
                                 <td style="text-align: right; font-weight: 600; color: var(--primary);">₱${totalRI.toFixed(4)}</td>
                             </tr>`;
-                    }
-
-                    if (activeCount === Object.keys(PLANTS).length) {
-                        year += 1; // Show every year once all units are active
-                    }
                 }
 
-                // Render Roadmap Chart
-                const roadmapCtx = document.getElementById('roadmapChart').getContext('2d');
-                if (roadmapChartInstance) roadmapChartInstance.destroy();
-                roadmapChartInstance = new Chart(roadmapCtx, {
-                    type: 'line',
-                    data: {
-                        labels: years,
-                        datasets: [
-                            {
-                                label: 'Rate Impact (₱/kWh)',
-                                data: impacts,
-                                borderColor: '#2563eb',
-                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                                yAxisID: 'y',
-                                tension: 0.3,
-                                fill: true
-                            },
-                            {
-                                label: 'Total Capacity (MW)',
-                                data: capacities,
-                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                                borderColor: '#10b981',
-                                type: 'bar',
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Active Units',
-                                data: unitCounts,
-                                borderColor: '#f59e0b',
-                                borderDash: [5, 5],
-                                yAxisID: 'y2',
-                                tension: 0
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        interaction: { mode: 'index', intersect: false },
-                        scales: {
-                            y: { title: { display: true, text: '₱/kWh' }, position: 'left' },
-                            y1: { title: { display: true, text: 'MW' }, position: 'right', grid: { display: false } },
-                            y2: { title: { display: true, text: 'Units' }, position: 'right', grid: { display: false }, min: 0, max: 10 }
+                if (activeCount === Object.keys(PLANTS).length) {
+                    year += 1; // Show every year once all units are active
+                }
+            }
+
+            // Render Roadmap Chart
+            const roadmapCtx = document.getElementById('roadmapChart').getContext('2d');
+            if (roadmapChartInstance) roadmapChartInstance.destroy();
+            roadmapChartInstance = new Chart(roadmapCtx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: 'Rate Impact (₱/kWh)',
+                            data: impacts,
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            yAxisID: 'y',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Total Capacity (MW)',
+                            data: capacities,
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            borderColor: '#10b981',
+                            type: 'bar',
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Active Units',
+                            data: unitCounts,
+                            borderColor: '#f59e0b',
+                            borderDash: [5, 5],
+                            yAxisID: 'y2',
+                            tension: 0
                         }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { title: { display: true, text: '₱/kWh' }, position: 'left' },
+                        y1: { title: { display: true, text: 'MW' }, position: 'right', grid: { display: false } },
+                        y2: { title: { display: true, text: 'Units' }, position: 'right', grid: { display: false }, min: 0, max: 10 }
                     }
-                });
-            }
-
-            function toggleSim() {
-                isSimulating = !isSimulating;
-                const btn = document.getElementById('playBtn');
-                if (isSimulating) {
-                    btn.innerText = "Stop Simulation";
-                    btn.style.background = "var(--danger)";
-                    simInterval = setInterval(step, 40);
-                } else {
-                    btn.innerText = "Resume Simulation";
-                    btn.style.background = "var(--primary)";
-                    clearInterval(simInterval);
                 }
-            }
+            });
+        }
 
-            // Finalized Initialization
-            populateTable();
-            populateRoadmap();
-            updatePlant();
-            updateSensitivityChart();
-        </script>
-    </div><!-- Close container -->
+        function toggleSim() {
+            isSimulating = !isSimulating;
+            const btn = document.getElementById('playBtn');
+            if (isSimulating) {
+                btn.innerText = "Stop Simulation";
+                btn.style.background = "var(--danger)";
+                simInterval = setInterval(step, 40);
+            } else {
+                btn.innerText = "Resume Simulation";
+                btn.style.background = "var(--primary)";
+                clearInterval(simInterval);
+            }
+        }
+
+        // WESM Price Suppression Chart Logic
+        let suppressionChart20yr = null;
+        let vrePenetration = 0.35;
+        let fuelTrend = 1.0;
+
+        function initSuppressionChart() {
+            const canvas = document.getElementById('suppression20YearChart');
+            if (!canvas) return;
+            const ctxS = canvas.getContext('2d');
+            if (suppressionChart20yr) suppressionChart20yr.destroy();
+
+            const labels = Array.from({ length: 21 }, (_, i) => 2025 + i);
+            suppressionChart20yr = new Chart(ctxS, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Baseline (Without PSH)',
+                            data: generateSuppressionData(false),
+                            borderColor: '#94a3b8',
+                            backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                            borderDash: [5, 5],
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'With PSH Suppression',
+                            data: generateSuppressionData(true),
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            borderDash: [],
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#2563eb'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: { grid: { color: '#f1f5f9' }, title: { display: true, text: 'Expected WESM Price (₱/kWh)', font: { size: 10 } }, min: 3 },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function generateSuppressionData(withPSH) {
+            const data = [];
+            let basePrice = 5.50 * fuelTrend;
+            for (let i = 0; i <= 20; i++) {
+                const inflation = Math.pow(1.025, i);
+                const vreVol = (vrePenetration * 1.5 * i / 20);
+                let price = basePrice * inflation + vreVol;
+                if (withPSH) {
+                    const benefit = (0.5 + (vrePenetration * 2.5)) * (i > 5 ? 1.2 : 0.6);
+                    price -= benefit;
+                }
+                data.push(Math.max(3.8, price));
+            }
+            return data;
+        }
+
+        function updateSuppressionForecast(type, val) {
+            if (type === 'vre') {
+                vrePenetration = parseFloat(val) / 100;
+                document.getElementById('valVRE').innerText = val + "%";
+            } else if (type === 'fuel') {
+                fuelTrend = parseFloat(val);
+                document.getElementById('valFuel').innerText = val + "x";
+            }
+            if (suppressionChart20yr) {
+                suppressionChart20yr.data.datasets[0].data = generateSuppressionData(false);
+                suppressionChart20yr.data.datasets[1].data = generateSuppressionData(true);
+                suppressionChart20yr.update();
+
+                const baseline = suppressionChart20yr.data.datasets[0].data;
+                const psh = suppressionChart20yr.data.datasets[1].data;
+                let totalDelta = 0;
+                baseline.forEach((v, i) => totalDelta += (v - psh[i]));
+                // 20-year aggregate savings across 2,000MW cluster
+                const savingsBillions = (totalDelta * 1400 * 365 * 10) / 1e9;
+                document.getElementById('totalSavings20yr').innerText = `₱${savingsBillions.toFixed(1)} Billion`;
+            }
+        }
+
+        // Finalized Initialization
+        populateTable();
+        populateRoadmap();
+        updatePlant();
+        updateSensitivityChart();
+    </script>
+    </div>
 </body>
 
 </html>
