@@ -1189,6 +1189,41 @@
                 </div>
             </div>
         </div>
+
+        <!-- CONVENTIONAL PLANT DISPLACEMENT ANALYTICS -->
+        <div class="card" style="border-top: 4px solid var(--danger); margin-bottom: 2rem;">
+            <div class="card-header">
+                <div class="card-title" style="color: var(--danger); font-weight: 800;">📉 Conventional Plant
+                    Displacement Matrix</div>
+                <div class="feature-badge" style="background: #fef2f2; color: #991b1b;">High-Cost Asset Replacement
+                </div>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p
+                    style="font-size: 0.8125rem; color: var(--text-dark); margin-bottom: 1.5rem; line-height: 1.5; border-left: 3px solid var(--danger); padding-left: 0.75rem;">
+                    Pumped storage facilitates the transition away from high-carbon, high-marginal-cost fuel sources. By
+                    charging with solar surplus and discharging
+                    during demand peaks, PSH targets the displacement of the following conventional units in the WESM
+                    merit order.
+                </p>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+                        <thead>
+                            <tr
+                                style="border-bottom: 1px solid var(--border-color); text-align: left; color: var(--text-muted);">
+                                <th style="padding: 0.75rem;">Generating Asset</th>
+                                <th style="padding: 0.75rem;">Technology</th>
+                                <th style="padding: 0.75rem;">Current Grid Role</th>
+                                <th style="padding: 0.75rem; text-align: right;">Probability of Displacement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="displacedPlantsBody">
+                            <!-- Populated by updateDisplacementTable() -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="footer-credit">
@@ -1597,6 +1632,7 @@
                 initSuppressionChart();
                 updateSuppressionForecast('vre', 35); // Initialize with default VRE
                 updateSuppressionForecast('fuel', 1.0); // Initialize with default Fuel
+                updateDisplacementTable();
             }
 
             // Handle simulator chart resizing
@@ -1931,6 +1967,47 @@
             return data;
         }
 
+        // Conventional Asset Displacement Logic
+        const CONVENTIONAL_PLANTS = [
+            { name: "Malaya Thermal Units 1 & 2", type: "Oil/Bunker", region: "Luzon", role: "Peaker / MRU", cap: 650 },
+            { name: "Naga Complex (Oil)", type: "Diesel", region: "Visayas", role: "Peaker / AS", cap: 100 },
+            { name: "Limay Diesel Plant", type: "Bunker C", region: "Luzon", role: "Peak Load", cap: 110 },
+            { name: "Masinloc Unit 1 (Aging)", type: "Coal", region: "Luzon", role: "Mid-Merit", cap: 300 },
+            { name: "Power Barge 101, 102", type: "Diesel", region: "Vis/Min", role: "Emergency / AS", cap: 64 },
+            { name: "Bauang Diesel (1590)", type: "Diesel", region: "Luzon", role: "Peaking", cap: 215 },
+            { name: "Calaca Unit 1 (Old)", type: "Coal", region: "Luzon", role: "Baseload", cap: 300 }
+        ];
+
+        function updateDisplacementTable() {
+            const body = document.getElementById('displacedPlantsBody');
+            if (!body) return;
+            body.innerHTML = '';
+
+            CONVENTIONAL_PLANTS.forEach(plant => {
+                // Heuristic displacement logic based on VRE penetration and Fuel Trends
+                let baseRisk = (plant.type.includes("Oil") || plant.type.includes("Diesel") || plant.type.includes("Bunker")) ? 65 : 15;
+                let fuelMultiplier = plant.type.includes("Coal") ? (fuelTrend * 5) : (fuelTrend * 15);
+                let vreImpact = vrePenetration * 45;
+
+                let probability = Math.min(99, baseRisk + fuelMultiplier + vreImpact);
+                if (plant.role === "Baseload") probability = Math.min(40, vrePenetration * 80);
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid var(--border-color)';
+                tr.innerHTML = `
+                    <td style="padding: 0.75rem;"><strong>${plant.name}</strong><br><small style="color:var(--text-muted)">${plant.region}</small></td>
+                    <td style="padding: 0.75rem;">${plant.type}</td>
+                    <td style="padding: 0.75rem;">${plant.role}</td>
+                    <td style="padding: 0.75rem; text-align: right;">
+                        <span class="feature-badge" style="background: ${probability > 60 ? '#fef2f2' : '#f0fdf4'}; color: ${probability > 60 ? '#991b1b' : '#166534'};">
+                            ${probability.toFixed(0)}% Displaced
+                        </span>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
         function updateSuppressionForecast(type, val) {
             if (type === 'vre') {
                 vrePenetration = parseFloat(val) / 100;
@@ -1951,6 +2028,9 @@
                 // 20-year aggregate savings across 2,000MW cluster
                 const savingsBillions = (totalDelta * 1400 * 365 * 10) / 1e9;
                 document.getElementById('totalSavings20yr').innerText = `₱${savingsBillions.toFixed(1)} Billion`;
+
+                // Update displacement table in parallel
+                updateDisplacementTable();
             }
         }
 
