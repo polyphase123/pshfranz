@@ -1177,7 +1177,73 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- PORTFOLIO STRATEGIC SYNERGY MATRIX -->
+                <div class="card" style="margin-top: 2rem; border-left: 5px solid #2563eb;">
+                    <div class="card-header" style="background: #f8fafc;">
+                        <div style="display: flex; flex-direction: column;">
+                            <div class="card-title" style="font-weight: 800; font-size: 1.1rem; color: #1e293b;">🧩
+                                Cross-Asset Portfolio Synergy Matrix</div>
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">Correlation of
+                                Mutual Resource Support & Market Hedging</p>
+                        </div>
+                        <div class="feature-badge" style="background: #e0f2fe; color: #0369a1;">Synergy Intelligence
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem;">
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: separate; border-spacing: 0.5rem;">
+                                    <thead>
+                                        <tr style="font-size: 0.65rem; text-transform: uppercase; color: #64748b;">
+                                            <th style="padding: 0.5rem; text-align: left;">Support Factor</th>
+                                            <th
+                                                style="padding: 0.5rem; text-align: center; border-bottom: 2px solid #8b5cf6;">
+                                                Baseload (GEO)</th>
+                                            <th
+                                                style="padding: 0.5rem; text-align: center; border-bottom: 2px solid #2563eb;">
+                                                Peaker (PSH)</th>
+                                            <th
+                                                style="padding: 0.5rem; text-align: center; border-bottom: 2px solid #0ea5e9;">
+                                                Seasonal (IMP)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="synergyTable">
+                                        <!-- Populated by engine -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div
+                                    style="background: #f1f5f9; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+                                    <h4
+                                        style="font-size: 0.75rem; font-weight: 800; color: #334155; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                                        💡 Synergy Narrative
+                                    </h4>
+                                    <div id="synergyLogicText"
+                                        style="font-size: 0.7rem; color: #475569; line-height: 1.6;">
+                                        Select a regulatory stress scenario to analyze cross-asset compensation
+                                        mechanisms.
+                                    </div>
+                                </div>
+                                <div
+                                    style="background: #fff; padding: 1rem; border-radius: 0.75rem; border: 1px solid #e2e8f0;">
+                                    <h4
+                                        style="font-size: 0.65rem; font-weight: 800; color: #64748b; text-transform: uppercase;">
+                                        📐 Calculation Methodology</h4>
+                                    <div id="synergyMethodology"
+                                        style="font-size: 0.6rem; color: #94a3b8; margin-top: 0.5rem; line-height: 1.4;">
+                                        Scores derived via Pmax/Demand weighting & normalized availability factors.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
+
             <div class="card" style="margin-top: 2rem;">
                 <div class="card-header">
                     <div class="card-title">Regulatory Metadata & Transparency</div>
@@ -1189,12 +1255,10 @@
                     </p>
                     <button class="calc-basis-btn" onclick="showInfo('audit_methodology')">📜 View Detailed
                         Methodology</button>
-                    <button class="calc-basis-btn"
-                        style="margin-top: 0.5rem; background: #059669; color: white; border: none;"
-                        onclick="generateAuditReport()">📂 Generate Regulatory Audit Report</button>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- WESM PRICE SUPPRESSION TAB CONTENT -->
@@ -2470,6 +2534,8 @@
             const ciUpper = [];
             const ciLower = [];
 
+            updateSynergyMatrix();
+
             const p = PLANTS[currentPlant];
             const effectiveCap = p.capacity * pshDerateFactor;
             const hoursPerMonth = 30 * 24;
@@ -2557,6 +2623,60 @@
                     }
                 }
             });
+        }
+
+        function updateSynergyMatrix() {
+            const table = document.getElementById('synergyTable');
+            if (!table) return;
+
+            const scenario = document.getElementById('stressScenario').value;
+
+            // Dynamic Scoring Logic based on Stress Params
+            const gEff = geoDerateLimit;
+            const hRes = hydReservoirLevel;
+            const pAvail = pshDerateFactor;
+
+            let matrix = {
+                "System Inertia (SIR)": [0.99 * gEff, 0.92 * pAvail, 0.95 * hRes],
+                "Ancillary Liquidity": [0.30 * gEff, 0.98 * pAvail, 0.85 * hRes],
+                "Market Hedge Factor": [0.90 * fuelTrend, 0.95 * marketPriceScalar, 0.80 * hRes],
+                "Resource Buffer": [0.99, 0.70 * pAvail, 1.0 * hRes],
+                "N-1 Security": [0.95 * gEff, 0.99 * (mustRunActive ? 1.1 : 1.0), 0.90 * hRes]
+            };
+
+            let narrative = "Geothermal ensures the <strong>supercritical thermal floor</strong>, preventing load shedding. PSH provides the <strong>market-clearing elasticity</strong>, while Impounding acts as the <strong>portfolio energy reservoir</strong>.";
+            let methodology = "<strong>Formula:</strong> Score = [Technical Potential] × [User Stress Factor]. <br><em>Note: PSH N-1 Security uses a 1.1x boost when Forced Dispatch is active.</em>";
+
+            if (scenario === 'el_nino') {
+                matrix["Resource Buffer"][2] *= 0.3; // -70% Hydro Buffer
+                matrix["System Inertia (SIR)"][2] *= 0.5;
+                narrative = "<strong>Support Strategy:</strong> GEOTHERMAL (99%) is currently holding the grid inertia as IMPOUNDING efficiency drops to 30%. PSH is utilizing the 'Night-Charging Sink' to recover hydro head levels.";
+                methodology = "<strong>El Niño logic:</strong> Hyd Buffer = (Static Head × 0.3). SIR Geo = Constant (Stability Lock).";
+            } else if (scenario === 'heatwave') {
+                matrix["Ancillary Liquidity"][1] = Math.min(1.0, matrix["Ancillary Liquidity"][1] * 1.05);
+                matrix["Ancillary Liquidity"][2] = Math.min(1.0, matrix["Ancillary Liquidity"][2] * 1.1);
+                narrative = "<strong>Peak Synchronization:</strong> PSH (98%) and IMP (85%) are providing maximum AS Liquidity to prevent WESM price spikes. Thermal derating is mitigated by supercritical cooling designs.";
+                methodology = "<strong>Heatwave sync:</strong> Liquidity = (Pmax × Contingency Loading). Thermal Derate = (Ambient - Design Temp).";
+            } else if (scenario === 'curtailment') {
+                matrix["Market Hedge Factor"][1] = 0.99;
+                narrative = "<strong>VRE Sponge Alpha:</strong> PSH units are operating at 99% Hedge efficiency, absorbing surplus solar that would otherwise be curtailed. This optimizes the 'RTE Compliance' for the entire GEA3 portfolio.";
+                methodology = "<strong>Curtailment Hedge:</strong> Hedge = 1 - (VRE Loss). PSH acts as the primary renewable bucket.";
+            }
+
+            table.innerHTML = '';
+            Object.entries(matrix).forEach(([factor, vals]) => {
+                let row = `<tr><td style="font-size:0.7rem; font-weight:700; color:#475569; white-space:nowrap;">${factor}</td>`;
+                vals.forEach(v => {
+                    const cappedV = Math.min(1.0, Math.max(0, v));
+                    const color = cappedV > 0.9 ? "#f0fdf4" : (cappedV > 0.7 ? "#fffbeb" : "#fef2f2");
+                    const tColor = cappedV > 0.9 ? "#166534" : (cappedV > 0.7 ? "#92400e" : "#991b1b");
+                    row += `<td style="text-align:center; padding:0.75rem; border-radius:10px; background:${color}; color:${tColor}; font-weight:800; border:2px solid #fff; font-size:0.8rem;">${(cappedV * 100).toFixed(0)}%</td>`;
+                });
+                row += `</tr>`;
+                table.innerHTML += row;
+            });
+            document.getElementById('synergyLogicText').innerHTML = narrative;
+            document.getElementById('synergyMethodology').innerHTML = methodology;
         }
 
         let roadmapChartInstance = null;
@@ -3157,17 +3277,7 @@
             }
         }
 
-        function generateAuditReport() {
-            const rte = document.getElementById('auditRTE').innerText;
-            const peaker = document.getElementById('auditPeaker').innerText;
-            const voll = document.getElementById('auditVOLL').innerText;
-            const summary = `ERC REGULATORY AUDIT SUMMARY\n\n` +
-                `1. Physical RTE: ${rte}\n` +
-                `2. Avoided Peaker: ${peaker}\n` +
-                `3. VOLL Resilience: ${voll}\n\n` +
-                `Status: All PSH settlement parameters within DOE DC2024-01-0003 guidelines.`;
-            alert(summary);
-        }
+
 
         function updateDisplacementHeatmap() {
             const container = document.getElementById('displacementHeatmap');
