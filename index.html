@@ -643,11 +643,22 @@
         }
 
         .kal-stat-card .value {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             font-weight: 900;
             margin: 0.25rem 0;
             color: #1e293b;
             line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            display: flex;
+            align-items: baseline;
+            gap: 0.25rem;
+        }
+
+        .kal-stat-card .value small {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 600;
         }
 
         .kal-stat-card .subtext {
@@ -1086,30 +1097,32 @@
                     (DC2025-04-0006)</div>
             </div>
             <div style="padding: 1.5rem;">
+                <!-- FULL WIDTH STATS HEADER -->
+                <div class="stats-grid" style="margin-bottom: 2rem; grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card kal-stat-card" style="border-left-color: #ef4444;">
+                        <div class="label">Total Pmax (MW)</div>
+                        <div class="value" id="valKalPmax">730</div>
+                        <div class="subtext">Aggregate nominated capacity</div>
+                    </div>
+                    <div class="stat-card kal-stat-card" style="border-left-color: #f59e0b;">
+                        <div class="label">KPSPP Tariff</div>
+                        <div class="value" id="valKalTariff">₱6.50<small>/kW/h</small></div>
+                        <div class="subtext">ERC-Approved recovery rate</div>
+                    </div>
+                    <div class="stat-card kal-stat-card" style="border-left-color: #3b82f6;">
+                        <div class="label">Nominated Day-Ahead</div>
+                        <div class="value" id="kalNomination">730<small>MW</small></div>
+                        <div class="subtext">Basis for Monthly Payment</div>
+                    </div>
+                    <div class="stat-card kal-stat-card" style="border-left-color: #10b981;">
+                        <div class="label">Total KPSPP Amount</div>
+                        <div class="value" id="totalKpsppAmount">₱0.00</div>
+                        <div class="subtext">Accrued Daily Settlement</div>
+                    </div>
+                </div>
+
                 <div class="main-grid" style="grid-template-columns: 2fr 1fr;">
                     <div class="left-col">
-                        <div class="stats-grid" style="margin-bottom: 1.5rem; grid-template-columns: repeat(4, 1fr);">
-                            <div class="stat-card kal-stat-card" style="border-left-color: #ef4444;">
-                                <div class="label">Total Pmax (MW)</div>
-                                <div class="value" id="valKalPmax">730</div>
-                                <div class="subtext">Aggregate nominated capacity</div>
-                            </div>
-                            <div class="stat-card kal-stat-card" style="border-left-color: #f59e0b;">
-                                <div class="label">KPSPP Tariff</div>
-                                <div class="value" id="valKalTariff">₱6.50<small>/kW/h</small></div>
-                                <div class="subtext">ERC-Approved recovery rate</div>
-                            </div>
-                            <div class="stat-card kal-stat-card" style="border-left-color: #3b82f6;">
-                                <div class="label">Nominated Day-Ahead</div>
-                                <div class="value" id="kalNomination">730 MW</div>
-                                <div class="subtext">Basis for Monthly Payment</div>
-                            </div>
-                            <div class="stat-card kal-stat-card" style="border-left-color: #10b981;">
-                                <div class="label">Total KPSPP Amount</div>
-                                <div class="value" id="totalKpsppAmount" style="font-size: 1.8rem;">₱0.00</div>
-                                <div class="subtext">Accrued Daily Settlement</div>
-                            </div>
-                        </div>
 
                         <div class="card">
                             <div class="card-header">
@@ -3660,7 +3673,12 @@
         }
 
         function kalStep() {
-            if (kalCurrentInterval >= 96) {
+            if (kalCurrentInterval > 96) {
+                const log = document.getElementById('kalLog');
+                if (log) {
+                    log.innerHTML += `<div style="color: #10b981; font-weight: 800; border-top: 1px solid #1e293b; margin-top: 5px; padding-top: 5px;">[24:00h] 🏁 KPSPP 24H CYCLE COMPLETE. FINAL SETTLEMENT CALCULATED.</div>`;
+                    log.scrollTop = log.scrollHeight;
+                }
                 toggleKalayaanSim();
                 return;
             }
@@ -3745,7 +3763,11 @@
 
             const log = document.getElementById('kalLog');
             if (log) {
-                log.innerHTML += `<div>[${kalCurrentInterval * 15}m] ${logMsg}</div>`;
+                const h = Math.floor((kalCurrentInterval * 15) / 60);
+                const m = (kalCurrentInterval * 15) % 60;
+                const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+
+                log.innerHTML += `<div><span style="color: #94a3b8;">[${timeStr}h]</span> <span style="color: ${isKalOutage ? '#f87171' : (mode.includes('FFR') ? '#60a5fa' : '#fecaca')}">${logMsg}</span></div>`;
                 log.scrollTop = log.scrollHeight;
             }
 
