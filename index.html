@@ -3270,8 +3270,10 @@
                     totalDelta += (v - total[i]);
                 });
 
-                const totalCap = (1400 + geoPenetration + hydPenetration);
-                const savingsBase = totalCap * 365 * 10 / 1e9;
+                // Convert total portfolio dispatch savings into 20-year net present value
+                const totalCapKW = (1400 + geoPenetration + hydPenetration) * 1000;
+                const activeHoursPerYear = 1460; // Assumed dispatch at peak for 4 hours a day
+                const savingsBase = (totalCapKW * activeHoursPerYear * 20) / 1e9; // Output directly in Billions Php
 
                 document.getElementById('totalSavings20yr').innerText = `₱${(totalDelta * savingsBase).toFixed(1)} Billion`;
                 document.getElementById('savingsPSH').innerText = `₱${(pshDelta * savingsBase).toFixed(1)} B`;
