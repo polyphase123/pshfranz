@@ -998,6 +998,30 @@
                             </p>
                         </div>
                     </div>
+                    <!-- REFINED PSH SPECIFIC SUMMARY -->
+                    <div class="card">
+                        <div class="card-title" style="font-size: 1rem; margin-bottom: 1.25rem;">PSH Settlement Impact
+                            Summary</div>
+                        <div
+                            style="padding: 0.85rem; border-radius: 0.5rem; background: #eff6ff; border: 1px solid #bfdbfe;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                <span style="font-size: 0.75rem; font-weight: 800; color: #1e40af;">GEA3 PSH (LOT
+                                    1-3)</span>
+                                <span class="feature-badge"
+                                    style="background: #1e40af; color: white; font-size: 0.6rem;">ARBITRAGE
+                                    BENEFIT</span>
+                            </div>
+                            <p style="font-size: 0.75rem; color: #1e3a8a; line-height: 1.4;">
+                                <strong>Consumer Edge:</strong> Operates at <strong>₱4.55 - ₱4.95/kWh</strong> GEAP
+                                rates. By absorbing solar during the day and injecting <strong>up to 2000MW</strong> at
+                                peak, it forces expensive <strong>₱18.00+ peakers</strong> out of the merit order,
+                                resulting in multi-billion peso suppression.
+                                <br><br><strong>Note:</strong> Requires strictly <strong>75% RTE</strong> compliance per
+                                DOE DC2024-01-0003 for full cost recovery.
+                            </p>
+                        </div>
+                    </div>
 
                     <div class="card">
                         <div class="card-header">
@@ -1271,8 +1295,28 @@
                                                 Operations scheduled via MDOM to minimize overall cost to customers
                                                 (Section 4).</div>
                                     </div>
-                                    <button class="calc-basis-btn" style="width:100%;"
+                                    <button class="calc-basis-btn" style="width:100%; border-radius: 0.5rem 0.5rem 0 0;"
                                         onclick="showInfo('kpspp_settlement')">View Settlement Logic</button>
+
+                                    <div
+                                        style="padding: 1rem; background: #fffbeb; border: 1px solid #fef3c7; border-top: 0; border-radius: 0 0 0.5rem 0.5rem;">
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                            <span
+                                                style="font-size: 0.7rem; font-weight: 800; color: #92400e;">SETTLEMENT
+                                                IMPACT</span>
+                                            <span class="feature-badge"
+                                                style="background: #92400e; color: white; font-size: 0.55rem;">BALANCED
+                                                RISK</span>
+                                        </div>
+                                        <p style="font-size: 0.7rem; color: #78350f; line-height: 1.5;">
+                                            <strong>730MW Capacity Insurance:</strong> Consumers pay
+                                            <strong>₱6.50/kW/h</strong> for sub-second FFR readiness. While this ensures
+                                            grid survival during N-1 surges, the socialized capacity payment continues
+                                            even at <strong>0 dispatch</strong>. Net benefit is found in <strong>avoided
+                                                load-shedding costs</strong>.
+                                        </p>
+                                    </div>
                                 </div>
 
                                 <!-- ERC TUNING CONTROLS -->
@@ -2284,11 +2328,21 @@
                             </div>
                         </div>
                         <div
-                            style="background: #fff; padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
-                            <div style="font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Grid
-                                Status</div>
-                            <div id="geoStatus" style="font-size: 0.9rem; font-weight: 700; color: #64748b;">STANDBY
+                            style="background: #f0fdf4; padding: 1.25rem; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.75rem; font-weight: 800; color: #166534;">CONSUMER SETTLEMENT
+                                    IMPACT Summary</span>
+                                <span class="feature-badge"
+                                    style="background: #166534; color: white; font-size: 0.6rem;">HIGHLY
+                                    ADVANTAGEOUS</span>
                             </div>
+                            <p style="font-size: 0.75rem; color: #14532d; line-height: 1.5;">
+                                <strong>Fixed Rate Armor:</strong> Winning bids range from <strong>₱4.88 to
+                                    ₱5.22/kWh</strong>. These are fixed price, baseload megawatts that displace diesel
+                                generators costing <strong>₱12-₱18/kWh</strong>. Zero fuel pass-through protects
+                                households from spikes in global commodity markets.
+                            </p>
                         </div>
                     </div>
                     <!-- WELLS TELEMETRY -->
@@ -2460,14 +2514,20 @@
                         </div>
 
                         <div
-                            style="background: white; padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                            style="background: #eff6ff; padding: 1.25rem; border-radius: 1rem; border: 1px solid #bfdbfe; box-shadow: var(--shadow-sm);">
                             <div
-                                style="font-size: 0.75rem; font-weight: 700; color: #075985; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                                🌧️ Monthly Rainwater Projection (Gened Location)
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <span style="font-size: 0.75rem; font-weight: 800; color: #1e40af;">HYDRO SETTLEMENT
+                                    IMPACT Summary</span>
+                                <span class="feature-badge"
+                                    style="background: #1e40af; color: white; font-size: 0.6rem;">SEASONAL VALUE</span>
                             </div>
-                            <div style="height: 120px;">
-                                <canvas id="rainChartGened"></canvas>
-                            </div>
+                            <p style="font-size: 0.75rem; color: #1e3a8a; line-height: 1.5;">
+                                <strong>Mid-Merit Displacement:</strong> Offering <strong>300MW</strong> at roughly
+                                <strong>₱5.38/kWh</strong>, hydro provides critical seasonal storage. During high-rain
+                                months, it aggressively displaces oil-fired units, lowering the overall WESM Load
+                                Weighted Average Price (LWAP) for consumers.
+                            </p>
                         </div>
                     </div>
 
