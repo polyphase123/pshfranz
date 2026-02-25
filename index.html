@@ -3165,11 +3165,13 @@
 
         function generateSuppressionData(layer) {
             const data = [];
-            let basePrice = 5.50 * fuelTrend;
+            // Regulatory forecast standard: Use 'Real Price' (flat curve in today's pesos) instead of nominal inflation.
+            // Anchored to the 2025 YTD GWAP Baseline (3.81)
+            let basePrice = 3.81 * fuelTrend;
             for (let i = 0; i <= 20; i++) {
-                const inflation = Math.pow(1.025, i);
+                // VRE Volatility premium: as RE penetration climbs linearly, duck-curve scarcity pricing emerges in the evening
                 const vreVol = (vrePenetration * 1.5 * i / 20);
-                let price = basePrice * inflation + vreVol;
+                let price = basePrice + vreVol;
 
                 let benefit = 0;
                 const geoBen = (geoPenetration / 1000 * 0.4) * (i > 2 ? 1 : 0);
