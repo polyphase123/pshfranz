@@ -171,9 +171,11 @@
 
         .controls {
             display: flex;
+            flex-wrap: wrap;
             gap: 1rem;
             align-items: center;
             margin-bottom: 1rem;
+            justify-content: flex-end;
         }
 
         button {
@@ -218,6 +220,12 @@
             background: var(--primary-light);
             color: var(--primary);
             border-color: var(--primary);
+        }
+
+        .year-selector {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: nowrap;
         }
 
         .reservoir-visual {
@@ -666,6 +674,14 @@
                 </select>
                 <button class="primary-btn" id="playBtn" onclick="toggleSim()">Run 5-Min Cycle</button>
                 <button class="secondary-btn" onclick="resetSim()">Reset</button>
+                <div
+                    style="display:flex; gap:0.5rem; margin-left:1rem; border-left: 1px solid var(--border-color); padding-left:1rem;">
+                    <button class="secondary-btn"
+                        onclick="document.getElementById('fileUpload').click(); return false;">📂 Load JSON</button>
+                    <input type="file" id="fileUpload" style="display:none" accept=".json"
+                        onchange="loadScenario(event)" />
+                    <button class="secondary-btn" onclick="saveScenario()">💾 Save JSON</button>
+                </div>
             </div>
         </header>
 
@@ -1518,7 +1534,7 @@
                                 <span>VRE Penetration</span>
                                 <span id="valVRE" style="color: var(--primary);">35%</span>
                             </label>
-                            <input type="range" min="20" max="80" step="5" value="35"
+                            <input type="range" min="20" max="80" step="5" value="35" id="slideVRE"
                                 style="width: 100%; margin-top: 0.5rem;"
                                 oninput="updateSuppressionForecast('vre', this.value)">
                             <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Target RE mix
@@ -1531,7 +1547,7 @@
                                 <span>Global Fuel Trend</span>
                                 <span id="valFuel" style="color: var(--primary);">1.0x</span>
                             </label>
-                            <input type="range" min="0.5" max="2.5" step="0.1" value="1.0"
+                            <input type="range" min="0.5" max="2.5" step="0.1" value="1.0" id="slideFuel"
                                 style="width: 100%; margin-top: 0.5rem;"
                                 oninput="updateSuppressionForecast('fuel', this.value)">
                             <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Projected
@@ -1543,7 +1559,7 @@
                                 <span>Pumped Storage (GEA3 Portfolio)</span>
                                 <span id="valPshPen" style="color: #2563eb;">6350MW</span>
                             </label>
-                            <input type="range" min="0" max="10000" step="50" value="6350"
+                            <input type="range" min="0" max="10000" step="50" value="6350" id="slidePsh"
                                 style="width: 100%; margin-top: 0.5rem;"
                                 oninput="updateSuppressionForecast('psh', this.value)">
                             <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Base: All 7
@@ -1556,7 +1572,7 @@
                                 <span>Geothermal (GEA3 Portfolio)</span>
                                 <span id="valGeoPen" style="color: #8b5cf6;">31MW</span>
                             </label>
-                            <input type="range" min="0" max="2000" step="1" value="31"
+                            <input type="range" min="0" max="2000" step="1" value="31" id="slideGeo"
                                 style="width: 100%; margin-top: 0.5rem;"
                                 oninput="updateSuppressionForecast('geo', this.value)">
                             <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Base: Tanawon,
@@ -1569,7 +1585,7 @@
                                 <span>Impounding (GEA3 Portfolio)</span>
                                 <span id="valHydPen" style="color: #0ea5e9;">300MW</span>
                             </label>
-                            <input type="range" min="0" max="1500" step="10" value="300"
+                            <input type="range" min="0" max="1500" step="10" value="300" id="slideHyd"
                                 style="width: 100%; margin-top: 0.5rem;"
                                 oninput="updateSuppressionForecast('hyd', this.value)">
                             <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Base: Gened 1 &
@@ -1738,6 +1754,15 @@
                             <!-- Populated by updateDisplacementTable() -->
                         </tbody>
                     </table>
+                </div>
+                <div
+                    style="margin-top: 1rem; padding: 1.25rem; border-radius: 0.75rem; background: var(--success-light); border: 1px solid var(--success); text-align: center;">
+                    <div
+                        style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--success); opacity:0.9;">
+                        🌍 Lifetime Carbon Emissions Displaced</div>
+                    <div id="co2Tracker"
+                        style="font-size: 1.5rem; font-weight: 800; color: #166534; margin-top: 0.25rem;">0.00 M Metric
+                        Tons (tCO2e)</div>
                 </div>
                 <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
                     <p style="font-size: 0.65rem; color: var(--text-muted); line-height: 1.4;">
@@ -2332,6 +2357,15 @@
                         backgroundColor: 'rgba(16, 185, 129, 0.2)',
                         yAxisID: 'y1',
                         type: 'bar', barThickness: 2
+                    },
+                    {
+                        label: 'GEAP Bid (LCOE)',
+                        data: [],
+                        borderColor: '#f59e0b',
+                        borderDash: [5, 5],
+                        backgroundColor: 'transparent',
+                        yAxisID: 'y',
+                        tension: 0, pointRadius: 0, fill: false
                     }
                 ]
             },
@@ -2453,8 +2487,10 @@
 
         function setYear(year) {
             currentYear = year;
-            document.querySelectorAll('.year-pill').forEach(p => p.classList.remove('active'));
-            event.target.classList.add('active');
+            document.querySelectorAll('.year-pill').forEach(p => {
+                p.classList.remove('active');
+                if (p.innerText.includes(year)) p.classList.add('active');
+            });
             populateTable();
             resetSim();
         }
@@ -2468,6 +2504,7 @@
             updateUI(null, 0);
             pshChart.data.datasets[0].data = [];
             pshChart.data.datasets[1].data = [];
+            pshChart.data.datasets[2].data = [];
             pshChart.update();
 
             document.getElementById('policyLog').innerHTML = '<div style="color: #94a3b8;">[SYSTEM] Simulation Reset. Awaiting Cycle...</div>';
@@ -2531,6 +2568,7 @@
             cumulativeAS += (capacityMW * 3.5 * duration);
             pshChart.data.datasets[0].data.push(price);
             pshChart.data.datasets[1].data.push(dispatch);
+            pshChart.data.datasets[2].data.push(nonFitGet);
 
             currentInterval++;
             updateUI(price, dispatch);
@@ -3218,6 +3256,7 @@
             const body = document.getElementById('displacedPlantsBody');
             if (!body) return;
             body.innerHTML = '';
+            let totalCO2e = 0;
 
             CONVENTIONAL_PLANTS.forEach(plant => {
                 // Heuristic displacement logic based on VRE penetration and Fuel Trends
@@ -3228,6 +3267,10 @@
 
                 let probability = Math.min(99, baseRisk + fuelMultiplier + vreImpact + portfolioImpact);
                 if (plant.role === "Baseload") probability = Math.min(60, (vrePenetration * 80) + (geoPenetration / 5));
+
+                let annualMWh = plant.cap * 1460 * (probability / 100);
+                let factor = plant.type.includes("Coal") ? 0.98 : (plant.type.includes("Natural Gas") ? 0.42 : 0.7);
+                totalCO2e += (annualMWh * factor * 20); // 20 year lifecycle
 
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = '1px solid var(--border-color)';
@@ -3245,6 +3288,9 @@
                 `;
                 body.appendChild(tr);
             });
+
+            const co2Elem = document.getElementById('co2Tracker');
+            if (co2Elem) co2Elem.innerText = `${(totalCO2e / 1e6).toFixed(2)} M Metric Tons (tCO2e)`;
         }
 
         function updateSuppressionForecast(type, val) {
@@ -3264,6 +3310,7 @@
                 pshPenetration = parseFloat(val);
                 document.getElementById('valPshPen').innerText = val + "MW";
             }
+            if (duckCurveChart && type === 'vre') updateDuckCurve();
             if (suppressionChart20yr) {
                 suppressionChart20yr.data.datasets[0].data = generateSuppressionData('baseline');
                 suppressionChart20yr.data.datasets[1].data = generateSuppressionData('geo');
@@ -3393,6 +3440,15 @@
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             yAxisID: 'y1',
                             tension: 0.3, pointRadius: 0, fill: true
+                        },
+                        {
+                            label: 'GEAP Bid (LCOE)',
+                            data: [],
+                            borderColor: '#f59e0b',
+                            borderDash: [5, 5],
+                            backgroundColor: 'transparent',
+                            yAxisID: 'y',
+                            tension: 0, pointRadius: 0, fill: false
                         }
                     ]
                 },
@@ -3449,6 +3505,15 @@
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             yAxisID: 'y1',
                             tension: 0.3, pointRadius: 0, fill: true
+                        },
+                        {
+                            label: 'GEAP Bid (LCOE)',
+                            data: [],
+                            borderColor: '#f59e0b',
+                            borderDash: [5, 5],
+                            backgroundColor: 'transparent',
+                            yAxisID: 'y',
+                            tension: 0, pointRadius: 0, fill: false
                         }
                     ]
                 },
@@ -3490,6 +3555,7 @@
             if (geoRevenueChart) {
                 geoRevenueChart.data.datasets[0].data = [];
                 geoRevenueChart.data.datasets[1].data = [];
+                if (geoRevenueChart.data.datasets[2]) geoRevenueChart.data.datasets[2].data = [];
                 geoRevenueChart.update();
             }
         }
@@ -3511,9 +3577,12 @@
                 if (geoCurrentInterval === 0) {
                     geoRevenueChart.data.datasets[0].data = [];
                     geoRevenueChart.data.datasets[1].data = [];
+                    if (geoRevenueChart.data.datasets[2]) geoRevenueChart.data.datasets[2].data = [];
                 }
+                const lcoeGeo = 5.0512;
                 geoRevenueChart.data.datasets[0].data.push(price);
                 geoRevenueChart.data.datasets[1].data.push(geoCumulativeRev);
+                if (geoRevenueChart.data.datasets[2]) geoRevenueChart.data.datasets[2].data.push(lcoeGeo);
                 geoRevenueChart.update('none');
                 document.getElementById('geoSimTime').innerText = geoRevenueChart.data.labels[geoCurrentInterval] + " H";
             }
@@ -3567,6 +3636,7 @@
             if (impRevenueChart) {
                 impRevenueChart.data.datasets[0].data = [];
                 impRevenueChart.data.datasets[1].data = [];
+                if (impRevenueChart.data.datasets[2]) impRevenueChart.data.datasets[2].data = [];
                 impRevenueChart.update();
             }
         }
@@ -3614,9 +3684,12 @@
                 if (impCurrentInterval === 0) {
                     impRevenueChart.data.datasets[0].data = [];
                     impRevenueChart.data.datasets[1].data = [];
+                    if (impRevenueChart.data.datasets[2]) impRevenueChart.data.datasets[2].data = [];
                 }
+                const lcoeImp = 5.38; // Estimate average GEA3 impounding rate
                 impRevenueChart.data.datasets[0].data.push(price);
                 impRevenueChart.data.datasets[1].data.push(impCumulativeRev);
+                if (impRevenueChart.data.datasets[2]) impRevenueChart.data.datasets[2].data.push(lcoeImp);
                 impRevenueChart.update('none');
                 document.getElementById('impSimTime').innerText = impRevenueChart.data.labels[impCurrentInterval] + " H";
             }
@@ -3658,12 +3731,109 @@
             }
         }
 
+        function updateDuckCurve() {
+            if (!duckCurveChart) return;
+            duckCurveChart.data.datasets[0].data = Array.from({ length: INTERVALS }, (_, i) => {
+                let baseLoad = 12000 + Math.sin((i / INTERVALS) * Math.PI * 2 - Math.PI / 2) * 2000;
+                let peakLoad = (i > 192 && i < 240) ? 1500 : 0; // 4pm - 8pm localized Peak
+                let solarOff = (i > 72 && i < 200) ? Math.sin((i - 72) / 128 * Math.PI) * (4000 * (vrePenetration / 0.35)) : 0;
+                return baseLoad + peakLoad - solarOff;
+            });
+            duckCurveChart.data.datasets[1].data = Array.from({ length: INTERVALS }, (_, i) => {
+                return (i > 72 && i < 200) ? Math.sin((i - 72) / 128 * Math.PI) * (4000 * (vrePenetration / 0.35)) : 0;
+            });
+            duckCurveChart.update();
+        }
+
+        let duckCurveChart = null;
+        function initDuckCurve() {
+            const duckCtx = document.getElementById('duckCurveChart');
+            if (!duckCtx) return;
+            duckCurveChart = new Chart(duckCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: INTERVALS }, (_, i) => {
+                        let h = Math.floor(i / 12);
+                        let m = (i % 12) * 5;
+                        return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                    }),
+                    datasets: [
+                        {
+                            label: 'System Net Load (MW)',
+                            data: [],
+                            borderColor: '#38bdf8',
+                            backgroundColor: 'rgba(56, 189, 248, 0.2)',
+                            fill: true, tension: 0.4, pointRadius: 0
+                        },
+                        {
+                            label: 'Solar Gen (Duck Belly Factor)',
+                            data: [],
+                            borderColor: '#facc15',
+                            borderDash: [5, 5],
+                            tension: 0.4, pointRadius: 0, fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { maxTicksLimit: 12 } },
+                        y: { title: { display: true, text: 'MW Capacity' }, min: 6000 }
+                    },
+                    plugins: { tooltip: { mode: 'index', intersect: false } }
+                }
+            });
+            updateDuckCurve();
+        }
+
+        function saveScenario() {
+            if (!suppressionChart20yr) {
+                initSuppressionChart();
+                updateSuppressionForecast('vre', 35);
+                updateSuppressionForecast('fuel', 1.0);
+                updateDisplacementTable();
+            }
+            const scenario = {
+                year: currentYear, plant: currentPlant, delay: globalProjectDelay, rateAdj: geaRateAdjustment,
+                vreP: document.getElementById('valVRE').innerText.replace('%', ''),
+                fuelT: document.getElementById('valFuel').innerText.replace('x', ''),
+                pshP: pshPenetration, geoP: geoPenetration, hydP: hydPenetration
+            };
+            const blob = new Blob([JSON.stringify(scenario, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `GEA3_Scenario_Export_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+        }
+
+        function loadScenario(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.year) setYear(data.year);
+                    if (data.plant) { document.getElementById('plantSelect').value = data.plant; updatePlant(); }
+                    if (data.delay !== undefined) { document.getElementById('slideDelay').value = data.delay; updateStressParam('delay', data.delay); }
+                    if (data.rateAdj !== undefined) { document.getElementById('slideRateAdj').value = data.rateAdj; updateStressParam('rateadj', data.rateAdj); }
+                    if (data.vreP) { document.getElementById('slideVRE').value = data.vreP; updateSuppressionForecast('vre', data.vreP); }
+                    if (data.fuelT) { document.getElementById('slideFuel').value = data.fuelT; updateSuppressionForecast('fuel', data.fuelT); }
+                    if (data.pshP) { document.getElementById('slidePsh').value = data.pshP; updateSuppressionForecast('psh', data.pshP); }
+                    if (data.geoP) { document.getElementById('slideGeo').value = data.geoP; updateSuppressionForecast('geo', data.geoP); }
+                    if (data.hydP) { document.getElementById('slideHyd').value = data.hydP; updateSuppressionForecast('hyd', data.hydP); }
+                } catch (err) { alert('Failed to parse JSON configuration: ' + err.message); console.error(err); }
+            };
+            reader.readAsText(file);
+        }
+
         // Initialize Advanced Analytics
         updateDisplacementHeatmap();
         setInterval(updateDisplacementHeatmap, 5000);
 
         // Initialize Initial Content
         initRainChartGened();
+        initDuckCurve();
 
         // Finalized Initialization
         populateTable();
