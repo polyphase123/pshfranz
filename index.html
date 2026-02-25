@@ -1537,31 +1537,43 @@
                             <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Projected
                                 relative cost of fossil fuels</p>
                         </div>
-
                         <div>
                             <label
                                 style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
-                                <span>Geothermal Expansion</span>
-                                <span id="valGeoPen" style="color: #8b5cf6;">500MW</span>
+                                <span>Pumped Storage (GEA3 Portfolio)</span>
+                                <span id="valPshPen" style="color: #2563eb;">6350MW</span>
                             </label>
-                            <input type="range" min="0" max="2000" step="100" value="500"
+                            <input type="range" min="0" max="10000" step="50" value="6350"
                                 style="width: 100%; margin-top: 0.5rem;"
-                                oninput="updateSuppressionForecast('geo', this.value)">
-                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Additional
-                                baseload supercritical geothermal</p>
+                                oninput="updateSuppressionForecast('psh', this.value)">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Base: All 7
+                                awarded PSH Lots (6,350 MW total)</p>
                         </div>
 
                         <div>
                             <label
                                 style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
-                                <span>Impounding Storage</span>
+                                <span>Geothermal (GEA3 Portfolio)</span>
+                                <span id="valGeoPen" style="color: #8b5cf6;">31MW</span>
+                            </label>
+                            <input type="range" min="0" max="2000" step="1" value="31"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                oninput="updateSuppressionForecast('geo', this.value)">
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Base: Tanawon,
+                                Bago, Mindanao 3 (31 MW total)</p>
+                        </div>
+
+                        <div>
+                            <label
+                                style="font-size: 0.8125rem; font-weight: 700; display: flex; justify-content: space-between;">
+                                <span>Impounding (GEA3 Portfolio)</span>
                                 <span id="valHydPen" style="color: #0ea5e9;">300MW</span>
                             </label>
-                            <input type="range" min="0" max="1500" step="50" value="300"
+                            <input type="range" min="0" max="1500" step="10" value="300"
                                 style="width: 100%; margin-top: 0.5rem;"
                                 oninput="updateSuppressionForecast('hyd', this.value)">
-                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Large-scale
-                                seasonal reservoir capacity</p>
+                            <p style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.5rem;">Base: Gened 1 &
+                                Gened 2 Hydro (300 MW total)</p>
                         </div>
                         <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-bottom: 1.5rem;">
                             <h4
@@ -2270,7 +2282,8 @@
         let geaRateAdjustment = 1.0; // Multiplier
 
         // GEA3 Expansion Variables
-        let geoPenetration = 500;
+        let pshPenetration = 6350;
+        let geoPenetration = 31;
         let hydPenetration = 300;
         let geoDerateLimit = 1.0;
         let hydReservoirLevel = 0.8;
@@ -3245,6 +3258,9 @@
             } else if (type === 'hyd') {
                 hydPenetration = parseFloat(val);
                 document.getElementById('valHydPen').innerText = val + "MW";
+            } else if (type === 'psh') {
+                pshPenetration = parseFloat(val);
+                document.getElementById('valPshPen').innerText = val + "MW";
             }
             if (suppressionChart20yr) {
                 suppressionChart20yr.data.datasets[0].data = generateSuppressionData('baseline');
@@ -3271,7 +3287,7 @@
                 });
 
                 // Convert total portfolio dispatch savings into 20-year net present value
-                const totalCapKW = (1400 + geoPenetration + hydPenetration) * 1000;
+                const totalCapKW = (pshPenetration + geoPenetration + hydPenetration) * 1000;
                 const activeHoursPerYear = 1460; // Assumed dispatch at peak for 4 hours a day
                 const savingsBase = (totalCapKW * activeHoursPerYear * 20) / 1e9; // Output directly in Billions Php
 
