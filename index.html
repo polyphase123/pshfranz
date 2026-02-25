@@ -3212,9 +3212,13 @@
                 let price = basePrice + vreVol;
 
                 let benefit = 0;
+                // Benefits scaled by interactive capacity penetration variables
                 const geoBen = (geoPenetration / 1000 * 0.4) * (i > 2 ? 1 : 0);
                 const hydBen = (hydPenetration / 1000 * 0.6) * (i > 4 ? 1 : 0);
-                const pshBen = (0.5 + vrePenetration * 2.5) * (i > 5 ? 1.2 : 0.6);
+
+                // PSH benefit scales with capacity and grows with VRE penetration (arbitration value)
+                const pshBaseBen = (0.5 + vrePenetration * 2.5) * (i > 5 ? 1.2 : 0.6);
+                const pshBen = (pshPenetration / 6350) * pshBaseBen;
 
                 if (layer === 'geo') benefit = geoBen;
                 if (layer === 'hyd') benefit = geoBen + hydBen;
@@ -3310,7 +3314,7 @@
                 pshPenetration = parseFloat(val);
                 document.getElementById('valPshPen').innerText = val + "MW";
             }
-            if (duckCurveChart && type === 'vre') updateDuckCurve();
+            if (duckCurveChart) updateDuckCurve();
             if (suppressionChart20yr) {
                 suppressionChart20yr.data.datasets[0].data = generateSuppressionData('baseline');
                 suppressionChart20yr.data.datasets[1].data = generateSuppressionData('geo');
@@ -3733,14 +3737,26 @@
 
         function updateDuckCurve() {
             if (!duckCurveChart) return;
+            // Dataset 0: Gross Net Load (Load - Solar)
             duckCurveChart.data.datasets[0].data = Array.from({ length: INTERVALS }, (_, i) => {
                 let baseLoad = 12000 + Math.sin((i / INTERVALS) * Math.PI * 2 - Math.PI / 2) * 2000;
-                let peakLoad = (i > 192 && i < 240) ? 1500 : 0; // 4pm - 8pm localized Peak
+                let peakLoad = (i > 192 && i < 240) ? 1500 : 0;
                 let solarOff = (i > 72 && i < 200) ? Math.sin((i - 72) / 128 * Math.PI) * (4000 * (vrePenetration / 0.35)) : 0;
                 return baseLoad + peakLoad - solarOff;
             });
+            // Dataset 1: Solar Only
             duckCurveChart.data.datasets[1].data = Array.from({ length: INTERVALS }, (_, i) => {
                 return (i > 72 && i < 200) ? Math.sin((i - 72) / 128 * Math.PI) * (4000 * (vrePenetration / 0.35)) : 0;
+            });
+            // Dataset 2: Net Load with PSH Flattening
+            duckCurveChart.data.datasets[2].data = duckCurveChart.data.datasets[0].data.map((load, i) => {
+                const pshCapMW = pshPenetration;
+                let pshAction = 0;
+                // Pumping Logic: Noon belly (Solar Surplus)
+                if (i > 96 && i < 168) pshAction = pshCapMW * 0.8; // Absorb Solar
+                // Discharge Logic: Evening Peak
+                if (i > 204 && i < 240) pshAction = -pshCapMW * 0.9; // Peak Shave
+                return load + pshAction;
             });
             duckCurveChart.update();
         }
@@ -3770,6 +3786,14 @@
                             data: [],
                             borderColor: '#facc15',
                             borderDash: [5, 5],
+                            tension: 0.4, pointRadius: 0, fill: false
+                        },
+                        {
+                            label: 'Net Load with PSH (Flattened)',
+                            data: [],
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            yAxisID: 'y',
                             tension: 0.4, pointRadius: 0, fill: false
                         }
                     ]
