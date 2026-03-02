@@ -1133,7 +1133,12 @@
                     </div>
                     <div class="stat-card kal-stat-card" style="border-left-color: #f59e0b;">
                         <div class="label">KPSPP Tariff</div>
-                        <div class="value" id="valKalTariff">₱6.50<small>/kW/h</small></div>
+                        <div class="value" style="display: flex; align-items: baseline;">
+                            ₱<input type="number" id="kalTariffInput" step="0.05" value="6.50"
+                                oninput="updateKalParam('tariff', this.value)"
+                                style="background: transparent; border: none; font-size: 1.5rem; font-weight: 700; color: inherit; width: 4.5rem; outline: none; padding: 0; font-family: inherit;">
+                            <small>/kW/h</small>
+                        </div>
                         <div class="subtext">ERC-Approved recovery rate</div>
                     </div>
                     <div class="stat-card kal-stat-card" style="border-left-color: #3b82f6;">
@@ -1334,8 +1339,9 @@
                                                 <span>KPSPP Tariff (₱/kW/h)</span>
                                                 <span id="labelKalTariff" style="color: #ef4444;">₱6.50</span>
                                             </label>
-                                            <input type="range" min="1.00" max="15.00" step="0.05" value="6.50"
-                                                style="width: 100%;" oninput="updateKalParam('tariff', this.value)">
+                                            <input type="range" id="kalTariffSlider" min="1.00" max="15.00" step="0.05"
+                                                value="6.50" style="width: 100%;"
+                                                oninput="updateKalParam('tariff', this.value)">
                                             <p
                                                 style="font-size: 0.6rem; color: var(--text-muted); margin-top: 0.25rem;">
                                                 Regulated base rate for capacity recovery.</p>
@@ -3932,9 +3938,26 @@
 
         function updateKalParam(type, val) {
             if (type === 'tariff') {
-                kalTariff = parseFloat(val);
-                document.getElementById('labelKalTariff').innerText = `₱${kalTariff.toFixed(2)}`;
-                document.getElementById('valKalTariff').innerHTML = `₱${kalTariff.toFixed(2)}<small>/kW/h</small>`;
+                kalTariff = parseFloat(val) || 6.50;
+
+                // Update all labels
+                const label1 = document.getElementById('labelKalTariff');
+                if (label1) label1.innerText = `₱${kalTariff.toFixed(2)}`;
+
+                const label2 = document.getElementById('impactParamTariff');
+                if (label2) label2.innerText = `₱${kalTariff.toFixed(2)}/kW/h`;
+
+                // Sync inputs
+                const input1 = document.getElementById('kalTariffInput');
+                if (input1 && input1 !== document.activeElement) input1.value = kalTariff.toFixed(2);
+
+                const slider1 = document.getElementById('kalTariffSlider');
+                if (slider1 && slider1 !== document.activeElement) slider1.value = val;
+
+                // Update PLANTS object for projections
+                if (typeof PLANTS !== 'undefined' && PLANTS.kalayaan) {
+                    PLANTS.kalayaan.rate = kalTariff;
+                }
             } else if (type === 'capacity') {
                 const mw = parseInt(val);
                 kalCapacity = mw * 1000;
